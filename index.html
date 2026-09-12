@@ -158,18 +158,19 @@
     </div>
   </div>
 
-  <!-- Modal Membros -->
+  <!-- Modal Membros com Fotos -->
   <div id="modal-membros" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
     <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-xl p-6 space-y-4">
       <div class="flex justify-between items-center">
-        <h3 class="font-bold text-lg text-white">Gerenciar Membros</h3>
+        <h3 class="font-bold text-lg text-white">Gerenciar Membros & Fotos</h3>
         <button onclick="fecharModalMembros()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div class="space-y-3">
         <div class="space-y-2 bg-slate-900 p-3 rounded-lg border border-slate-700">
-          <span class="text-xs text-slate-400 block font-semibold">Adicionar Membro</span>
-          <input type="text" id="novo-membro-nome" placeholder="Nome da Pessoa" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
-          <button onclick="adicionarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-sm font-medium mt-1">Salvar Membro</button>
+          <span class="text-xs text-slate-400 block font-semibold">Adicionar Membro da Família</span>
+          <input type="text" id="novo-membro-nome" placeholder="Nome (Ex: Diego, Maria...)" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
+          <input type="url" id="novo-membro-foto" placeholder="Link da foto/avatar (Opcional)" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-blue-500">
+          <button onclick="adicionarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-sm font-medium mt-1 transition-all">Salvar Membro</button>
         </div>
         <div class="border-t border-slate-700 pt-3">
           <span class="text-xs text-slate-400 mb-2 block font-semibold">Membros Ativos:</span>
@@ -180,7 +181,7 @@
   </div>
 
   <script>
-    // Configuração com as suas credenciais oficiais do Firebase
+    // Configuração oficial Firebase
     const firebaseConfig = {
       apiKey: "AiZaSyCT7UJkbCfwq64K3_s3chD",
       authDomain: "app-contad-diego.firebaseapp.com",
@@ -195,7 +196,7 @@
     const db = firebase.database();
 
     let contas = [];
-    let membros = [{ nome: 'Geral' }];
+    let membros = [{ nome: 'Geral', foto: '' }];
     let chartInstance = null;
 
     // Configuração de datas
@@ -206,7 +207,7 @@
     document.getElementById('current-month-filter').value = mesAnoAtual;
     document.getElementById('conta-mes-ref').value = mesAnoAtual;
 
-    // Monitoramento de conexão em tempo real
+    // Monitoramento de conexão
     db.ref('.info/connected').on('value', (snap) => {
       const statusBox = document.getElementById('status-conexao');
       if (snap.val() === true) {
@@ -218,7 +219,7 @@
       }
     });
 
-    // Escuta em tempo real no seu próprio banco de dados
+    // Escuta em tempo real do banco de dados
     db.ref('familia/contas').on('value', (snapshot) => {
       const data = snapshot.val();
       contas = [];
@@ -232,13 +233,14 @@
 
     db.ref('familia/membros').on('value', (snapshot) => {
       const data = snapshot.val();
-      membros = [{ nome: 'Geral' }];
+      membros = [{ nome: 'Geral', foto: '' }];
       if (data) {
         Object.keys(data).forEach(key => {
           membros.push({ id: key, ...data[key] });
         });
       }
       atualizarSelectsMembros();
+      atualizarInterface();
       if (!document.getElementById('modal-membros').classList.contains('hidden')) {
         renderizarListaMembrosModal();
       }
@@ -255,15 +257,29 @@
 
     function adicionarMembro() {
       const nomeInput = document.getElementById('novo-membro-nome');
+      const fotoInput = document.getElementById('novo-membro-foto');
       const nome = nomeInput.value.trim();
-      if (!nome) return alert('Digite um nome.');
+      const foto = fotoInput.value.trim();
+      if (!nome) return alert('Digite um nome para o membro.');
 
-      db.ref('familia/membros').push({ nome });
+      db.ref('familia/membros').push({ nome, foto });
       nomeInput.value = '';
+      fotoInput.value = '';
     }
 
     function excluirMembro(id) {
-      db.ref('familia/membros/' + id).remove();
+      if (confirm('Deseja remover este membro da família?')) {
+        db.ref('familia/membros/' + id).remove();
+      }
+    }
+
+    function getAvatarHTML(nomeMembro) {
+      const membro = membros.find(m => m.nome === nomeMembro);
+      if (membro && membro.foto) {
+        return `<img src="${membro.foto}" class="w-6 h-6 rounded-full object-cover border border-purple-400" alt="${nomeMembro}">`;
+      }
+      const inicial = nomeMembro ? nomeMembro.charAt(0).toUpperCase() : 'G';
+      return `<div class="w-6 h-6 rounded-full bg-purple-600/80 text-white text-[10px] font-bold flex items-center justify-center border border-purple-400">${inicial}</div>`;
     }
 
     function renderizarListaMembrosModal() {
@@ -271,10 +287,14 @@
       container.innerHTML = '';
       membros.forEach(m => {
         if (m.nome === 'Geral') return;
+        const avatar = getAvatarHTML(m.nome);
         container.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-900 p-2 rounded-lg text-sm">
-            <span class="text-white">${m.nome}</span>
-            <button onclick="excluirMembro('${m.id}')" class="text-red-400 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i> Excluir</button>
+          <div class="flex justify-between items-center bg-slate-900 p-2 rounded-lg text-sm border border-slate-700/60">
+            <div class="flex items-center gap-2">
+              ${avatar}
+              <span class="text-white font-medium">${m.nome}</span>
+            </div>
+            <button onclick="excluirMembro('${m.id}')" class="text-red-400 hover:text-red-300 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i> Excluir</button>
           </div>
         `;
       });
@@ -385,10 +405,17 @@
           tMes += c.valor;
           if (c.pago) tPago += c.valor; else tPend += c.valor;
 
+          const avatar = getAvatarHTML(c.membro || 'Geral');
+
           tbody.innerHTML += `
             <tr class="border-b border-slate-700/50 hover:bg-slate-700/20 transition-all">
               <td class="p-3 font-medium text-white">${c.titulo}</td>
-              <td class="p-3 text-slate-300"><span class="bg-slate-700 px-2 py-1 rounded text-xs inline-flex items-center gap-1"><i class="fa-solid fa-user text-xs text-purple-400"></i> ${c.membro || 'Geral'}</span></td>
+              <td class="p-3 text-slate-300">
+                <span class="bg-slate-900/80 border border-slate-700 px-2 py-1 rounded-lg text-xs inline-flex items-center gap-2">
+                  ${avatar}
+                  <span>${c.membro || 'Geral'}</span>
+                </span>
+              </td>
               <td class="p-3 text-slate-300">${c.vencimento ? c.vencimento.split('-').reverse().join('/') : '-'}</td>
               <td class="p-3 text-slate-200 font-semibold">R$ ${c.valor.toFixed(2)}</td>
               <td class="p-3"><span class="px-2 py-1 rounded text-xs font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">${c.pago ? 'Quitada' : 'Pendente'}</span></td>
