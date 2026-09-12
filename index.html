@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinanceSmart - Nuvem da Família</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Firebase SDKs (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
+  
+  <div id="app" class="p-4 max-w-6xl mx-auto space-y-6">
+    <!-- Status Conexão Tempo Real -->
+    <div id="status-conexao" class="bg-amber-600/20 border border-amber-500/40 text-amber-300 text-xs px-3 py-1.5 rounded-lg flex items-center justify-between">
+      <span><i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Conectando à nuvem em tempo real...</span>
+      <span class="text-[10px] bg-amber-500/30 px-1.5 py-0.5 rounded">Aguardando</span>
+    </div>
+
+    <!-- Cabeçalho -->
+    <header class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 gap-4 shadow-lg">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-wallet text-emerald-500 text-2xl"></i>
+        <div>
+          <h1 class="text-xl font-bold flex items-center gap-2">FinanceSmart <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-normal">Ao Vivo</span></h1>
+          <p class="text-xs text-slate-400">Sincronizado entre todos os celulares</p>
+        </div>
+      </div>
+      
+      <div class="flex flex-wrap gap-2 items-center w-full sm:w-auto">
+        <button onclick="abrirModalNovaConta()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 shadow-lg transition-all">
+          <i class="fa-solid fa-plus"></i> Nova Conta
+        </button>
+        <button onclick="abrirModalMembros()" class="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all">
+          <i class="fa-solid fa-users"></i> Membros & Fotos
+        </button>
+      </div>
+    </header>
+
+    <!-- Filtros & Custos Fixos -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-800 p-4 rounded-xl border border-slate-700">
+      <div class="flex flex-col justify-center">
+        <span class="text-xs text-slate-400 mb-1">Mês de Referência</span>
+        <input type="month" id="current-month-filter" onchange="atualizarInterface()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+      </div>
+      <div class="flex flex-col justify-center">
+        <span class="text-xs text-slate-400 mb-1">Filtrar por Membro</span>
+        <select id="filtro-membro" onchange="atualizarInterface()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm focus:outline-none focus:border-blue-500">
+          <option value="">Todos os Membros</option>
+        </select>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2 md:pt-0">
+        <button onclick="lancarCustosFixos()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all w-full md:w-auto justify-center">
+          <i class="fa-solid fa-bolt"></i> Lançar Fixas (Aluguel, Carros...)
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard Rápido -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
+        <span class="text-slate-400 text-sm">Gasto Total do Mês</span>
+        <div id="total-month-expense" class="text-2xl font-bold text-white mt-1">R$ 0,00</div>
+      </div>
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
+        <span class="text-slate-400 text-sm">Contas Pendentes</span>
+        <div id="total-pending-expense" class="text-2xl font-bold text-amber-400 mt-1">R$ 0,00</div>
+      </div>
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
+        <span class="text-slate-400 text-sm">Contas Quitadas</span>
+        <div id="total-paid-expense" class="text-2xl font-bold text-emerald-400 mt-1">R$ 0,00</div>
+      </div>
+    </section>
+
+    <!-- Tabela de Contas -->
+    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
+      <div class="p-4 border-b border-slate-700 flex justify-between items-center">
+        <h2 class="font-bold text-lg text-white">Relação de Contas</h2>
+        <span id="contador-contas" class="text-xs bg-slate-700 px-2.5 py-1 rounded-full text-slate-300">0 contas</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
+              <th class="p-3">Título</th>
+              <th class="p-3">Membro</th>
+              <th class="p-3">Vencimento</th>
+              <th class="p-3">Valor</th>
+              <th class="p-3">Status</th>
+              <th class="p-3 text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="lista-contas-tbody">
+            <tr><td colspan="6" class="p-6 text-center text-slate-500">Carregando dados sincronizados...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Gráfico -->
+    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
+      <h2 class="font-bold text-lg text-white mb-4">Evolução Mensal</h2>
+      <div class="relative h-64 w-full">
+        <canvas id="comparativeChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nova Conta -->
+  <div id="modal-conta" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-xl p-6 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="font-bold text-lg text-white" id="modal-titulo">Adicionar Nova Conta</h3>
+        <button onclick="fecharModalNovaConta()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="form-conta" onsubmit="salvarConta(event)" class="space-y-3">
+        <input type="hidden" id="conta-id">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Título da Conta</label>
+          <input type="text" id="conta-titulo" required placeholder="Ex: Aluguel, Internet..." class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Valor (R$)</label>
+            <input type="number" step="0.01" id="conta-valor" required placeholder="0,00" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Vencimento</label>
+            <input type="date" id="conta-vencimento" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Mês Ref (AAAA-MM)</label>
+            <input type="month" id="conta-mes-ref" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Membro Responsável</label>
+            <select id="conta-membro" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
+              <option value="Geral">Geral</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="fecharModalNovaConta()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm">Cancelar</button>
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium">Salvar na Nuvem</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Membros -->
+  <div id="modal-membros" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-xl p-6 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="font-bold text-lg text-white">Gerenciar Membros</h3>
+        <button onclick="fecharModalMembros()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="space-y-3">
+        <div class="space-y-2 bg-slate-900 p-3 rounded-lg border border-slate-700">
+          <span class="text-xs text-slate-400 block font-semibold">Adicionar Membro</span>
+          <input type="text" id="novo-membro-nome" placeholder="Nome da Pessoa" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
+          <button onclick="adicionarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-sm font-medium mt-1">Salvar Membro</button>
+        </div>
+        <div class="border-t border-slate-700 pt-3">
+          <span class="text-xs text-slate-400 mb-2 block font-semibold">Membros Ativos:</span>
+          <div id="lista-membros-cadastrados" class="space-y-2 max-h-48 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuração com as suas credenciais oficiais do Firebase
+    const firebaseConfig = {
+      apiKey: "AiZaSyCT7UJkbCfwq64K3_s3chD",
+      authDomain: "app-contad-diego.firebaseapp.com",
+      databaseURL: "https://app-contad-diego-default-rtdb.firebaseio.com/",
+      projectId: "app-contad-diego",
+      storageBucket: "app-contad-diego.firebasestorage.app",
+      messagingSenderId: "572701759493",
+      appId: "1:572701759493:web:eaa0ffd648"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let contas = [];
+    let membros = [{ nome: 'Geral' }];
+    let chartInstance = null;
+
+    // Configuração de datas
+    const hoje = new Date();
+    const anoAtual = hoje.getFullYear();
+    const mesAtualStr = String(hoje.getMonth() + 1).padStart(2, '0');
+    const mesAnoAtual = `${anoAtual}-${mesAtualStr}`;
+    document.getElementById('current-month-filter').value = mesAnoAtual;
+    document.getElementById('conta-mes-ref').value = mesAnoAtual;
+
+    // Monitoramento de conexão em tempo real
+    db.ref('.info/connected').on('value', (snap) => {
+      const statusBox = document.getElementById('status-conexao');
+      if (snap.val() === true) {
+        statusBox.className = "bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 text-xs px-3 py-1.5 rounded-lg flex items-center justify-between";
+        statusBox.innerHTML = `<span><i class="fa-solid fa-wifi mr-1.5"></i> Conectado em Tempo Real (Sincronização Ativa)</span><span class="text-[10px] bg-emerald-500/30 px-1.5 py-0.5 rounded">ONLINE</span>`;
+      } else {
+        statusBox.className = "bg-amber-600/20 border border-amber-500/40 text-amber-300 text-xs px-3 py-1.5 rounded-lg flex items-center justify-between";
+        statusBox.innerHTML = `<span><i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Reconectando à nuvem...</span><span class="text-[10px] bg-amber-500/30 px-1.5 py-0.5 rounded">CONECTANDO</span>`;
+      }
+    });
+
+    // Escuta em tempo real no seu próprio banco de dados
+    db.ref('familia/contas').on('value', (snapshot) => {
+      const data = snapshot.val();
+      contas = [];
+      if (data) {
+        Object.keys(data).forEach(key => {
+          contas.push({ id: key, ...data[key] });
+        });
+      }
+      atualizarInterface();
+    });
+
+    db.ref('familia/membros').on('value', (snapshot) => {
+      const data = snapshot.val();
+      membros = [{ nome: 'Geral' }];
+      if (data) {
+        Object.keys(data).forEach(key => {
+          membros.push({ id: key, ...data[key] });
+        });
+      }
+      atualizarSelectsMembros();
+      if (!document.getElementById('modal-membros').classList.contains('hidden')) {
+        renderizarListaMembrosModal();
+      }
+    });
+
+    function abrirModalMembros() {
+      renderizarListaMembrosModal();
+      document.getElementById('modal-membros').classList.remove('hidden');
+    }
+
+    function fecharModalMembros() {
+      document.getElementById('modal-membros').classList.add('hidden');
+    }
+
+    function adicionarMembro() {
+      const nomeInput = document.getElementById('novo-membro-nome');
+      const nome = nomeInput.value.trim();
+      if (!nome) return alert('Digite um nome.');
+
+      db.ref('familia/membros').push({ nome });
+      nomeInput.value = '';
+    }
+
+    function excluirMembro(id) {
+      db.ref('familia/membros/' + id).remove();
+    }
+
+    function renderizarListaMembrosModal() {
+      const container = document.getElementById('lista-membros-cadastrados');
+      container.innerHTML = '';
+      membros.forEach(m => {
+        if (m.nome === 'Geral') return;
+        container.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-900 p-2 rounded-lg text-sm">
+            <span class="text-white">${m.nome}</span>
+            <button onclick="excluirMembro('${m.id}')" class="text-red-400 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i> Excluir</button>
+          </div>
+        `;
+      });
+    }
+
+    function atualizarSelectsMembros() {
+      const selectFiltro = document.getElementById('filtro-membro');
+      const selectConta = document.getElementById('conta-membro');
+      const fVal = selectFiltro.value;
+      const cVal = selectConta.value;
+
+      selectFiltro.innerHTML = '<option value="">Todos os Membros</option>';
+      selectConta.innerHTML = '';
+      membros.forEach(m => {
+        selectFiltro.innerHTML += `<option value="${m.nome}">${m.nome}</option>`;
+        selectConta.innerHTML += `<option value="${m.nome}">${m.nome}</option>`;
+      });
+      selectFiltro.value = fVal;
+      selectConta.value = cVal || 'Geral';
+    }
+
+    function abrirModalNovaConta() {
+      document.getElementById('conta-id').value = '';
+      document.getElementById('form-conta').reset();
+      document.getElementById('conta-mes-ref').value = document.getElementById('current-month-filter').value;
+      document.getElementById('conta-vencimento').value = new Date().toISOString().split('T')[0];
+      document.getElementById('modal-titulo').innerText = 'Adicionar Nova Conta';
+      atualizarSelectsMembros();
+      document.getElementById('modal-conta').classList.remove('hidden');
+    }
+
+    function fecharModalNovaConta() {
+      document.getElementById('modal-conta').classList.add('hidden');
+    }
+
+    function salvarConta(e) {
+      e.preventDefault();
+      const id = document.getElementById('conta-id').value;
+      const titulo = document.getElementById('conta-titulo').value;
+      const valor = parseFloat(document.getElementById('conta-valor').value);
+      const vencimento = document.getElementById('conta-vencimento').value;
+      const mesRef = document.getElementById('conta-mes-ref').value;
+      const membro = document.getElementById('conta-membro').value;
+
+      if (id) {
+        db.ref('familia/contas/' + id).update({
+          titulo, valor, vencimento, mesRef, membro
+        });
+      } else {
+        db.ref('familia/contas').push({
+          titulo, valor, vencimento, mesRef, membro, pago: false
+        });
+      }
+      fecharModalNovaConta();
+    }
+
+    function alternarStatus(id) {
+      const c = contas.find(x => x.id === id);
+      if (c) db.ref('familia/contas/' + id).update({ pago: !c.pago });
+    }
+
+    function excluirConta(id) {
+      if (confirm('Deseja excluir esta conta?')) {
+        db.ref('familia/contas/' + id).remove();
+      }
+    }
+
+    function lancarCustosFixos() {
+      const mesRef = document.getElementById('current-month-filter').value;
+      const fixos = [
+        { titulo: 'Aluguel', valor: 1500, dia: '05' },
+        { titulo: 'Carro', valor: 850, dia: '10' },
+        { titulo: 'Internet', valor: 120, dia: '10' },
+        { titulo: 'Transporte Escolar', valor: 400, dia: '08' },
+        { titulo: 'Convênio', valor: 350, dia: '15' }
+      ];
+
+      fixos.forEach(f => {
+        const existe = contas.some(c => c.mesRef === mesRef && c.titulo.toLowerCase() === f.titulo.toLowerCase());
+        if (!existe) {
+          db.ref('familia/contas').push({
+            titulo: f.titulo,
+            valor: f.valor,
+            vencimento: `${mesRef}-${f.dia}`,
+            mesRef: mesRef,
+            membro: 'Geral',
+            pago: false
+          });
+        }
+      });
+    }
+
+    function atualizarInterface() {
+      const mesFiltro = document.getElementById('current-month-filter').value;
+      const membroFiltro = document.getElementById('filtro-membro').value;
+
+      let filtradas = contas.filter(c => c.mesRef === mesFiltro);
+      if (membroFiltro) filtradas = filtradas.filter(c => c.membro === membroFiltro);
+
+      let tMes = 0, tPend = 0, tPago = 0;
+      const tbody = document.getElementById('lista-contas-tbody');
+      tbody.innerHTML = '';
+
+      if (filtradas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">Nenhuma conta cadastrada para este mês.</td></tr>`;
+      } else {
+        filtradas.forEach(c => {
+          tMes += c.valor;
+          if (c.pago) tPago += c.valor; else tPend += c.valor;
+
+          tbody.innerHTML += `
+            <tr class="border-b border-slate-700/50 hover:bg-slate-700/20 transition-all">
+              <td class="p-3 font-medium text-white">${c.titulo}</td>
+              <td class="p-3 text-slate-300"><span class="bg-slate-700 px-2 py-1 rounded text-xs inline-flex items-center gap-1"><i class="fa-solid fa-user text-xs text-purple-400"></i> ${c.membro || 'Geral'}</span></td>
+              <td class="p-3 text-slate-300">${c.vencimento ? c.vencimento.split('-').reverse().join('/') : '-'}</td>
+              <td class="p-3 text-slate-200 font-semibold">R$ ${c.valor.toFixed(2)}</td>
+              <td class="p-3"><span class="px-2 py-1 rounded text-xs font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">${c.pago ? 'Quitada' : 'Pendente'}</span></td>
+              <td class="p-3 text-right space-x-1">
+                <button onclick="alternarStatus('${c.id}')" class="text-xs bg-slate-700 hover:bg-slate-600 px-2.5 py-1.5 rounded text-slate-200 transition-all" title="Alternar Status"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
+                <button onclick="excluirConta('${c.id}')" class="text-xs bg-red-950/50 hover:bg-red-900 text-red-400 px-2.5 py-1.5 rounded transition-all" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      document.getElementById('total-month-expense').innerText = `R$ ${tMes.toFixed(2)}`;
+      document.getElementById('total-pending-expense').innerText = `R$ ${tPend.toFixed(2)}`;
+      document.getElementById('total-paid-expense').innerText = `R$ ${tPago.toFixed(2)}`;
+      document.getElementById('contador-contas').innerText = `${filtradas.length} contas`;
+      atualizarGrafico();
+    }
+
+    function atualizarGrafico() {
+      const ctx = document.getElementById('comparativeChart').getContext('2d');
+      const meses = [...new Set(contas.map(c => c.mesRef))].sort();
+      const totais = meses.map(m => contas.filter(c => c.mesRef === m).reduce((acc, curr) => acc + curr.valor, 0));
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: meses.length > 0 ? meses : [document.getElementById('current-month-filter').value],
+          datasets: [{
+            data: totais.length > 0 ? totais : [0],
+            backgroundColor: 'rgba(16, 185, 129, 0.5)',
+            borderColor: 'rgba(16, 185, 129, 1)',
+            borderWidth: 1,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
