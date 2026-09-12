@@ -158,7 +158,7 @@
     </div>
   </div>
 
-  <!-- Modal Membros com Fotos -->
+  <!-- Modal Membros com Upload da Galeria -->
   <div id="modal-membros" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
     <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-xl p-6 space-y-4">
       <div class="flex justify-between items-center">
@@ -169,7 +169,19 @@
         <div class="space-y-2 bg-slate-900 p-3 rounded-lg border border-slate-700">
           <span class="text-xs text-slate-400 block font-semibold">Adicionar Membro da Família</span>
           <input type="text" id="novo-membro-nome" placeholder="Nome (Ex: Diego, Maria...)" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500">
-          <input type="url" id="novo-membro-foto" placeholder="Link da foto/avatar (Opcional)" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-blue-500">
+          
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Escolher Foto da Galeria:</label>
+            <input type="file" id="novo-membro-arquivo" accept="image/*" onchange="processarFotoGaleria(event)" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-500 cursor-pointer">
+          </div>
+          
+          <input type="hidden" id="novo-membro-foto-base64">
+          
+          <div id="preview-foto-container" class="hidden flex items-center gap-2 pt-1">
+            <img id="preview-foto" class="w-8 h-8 rounded-full object-cover border border-purple-400">
+            <span class="text-xs text-emerald-400">Foto carregada!</span>
+          </div>
+
           <button onclick="adicionarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-sm font-medium mt-1 transition-all">Salvar Membro</button>
         </div>
         <div class="border-t border-slate-700 pt-3">
@@ -246,6 +258,47 @@
       }
     });
 
+    // Processamento e compressão da foto da galeria
+    function processarFotoGaleria(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 150; // Redimensiona para foto de perfil pequena
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height *= maxDim / width;
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width *= maxDim / height;
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          document.getElementById('novo-membro-foto-base64').value = dataUrl;
+          document.getElementById('preview-foto').src = dataUrl;
+          document.getElementById('preview-foto-container').classList.remove('hidden');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
     function abrirModalMembros() {
       renderizarListaMembrosModal();
       document.getElementById('modal-membros').classList.remove('hidden');
@@ -257,14 +310,16 @@
 
     function adicionarMembro() {
       const nomeInput = document.getElementById('novo-membro-nome');
-      const fotoInput = document.getElementById('novo-membro-foto');
+      const fotoBase64 = document.getElementById('novo-membro-foto-base64').value;
       const nome = nomeInput.value.trim();
-      const foto = fotoInput.value.trim();
+      
       if (!nome) return alert('Digite um nome para o membro.');
 
-      db.ref('familia/membros').push({ nome, foto });
+      db.ref('familia/membros').push({ nome, foto: fotoBase64 || '' });
       nomeInput.value = '';
-      fotoInput.value = '';
+      document.getElementById('novo-membro-foto-base64').value = '';
+      document.getElementById('novo-membro-arquivo').value = '';
+      document.getElementById('preview-foto-container').classList.add('hidden');
     }
 
     function excluirMembro(id) {
