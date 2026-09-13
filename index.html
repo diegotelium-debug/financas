@@ -248,7 +248,6 @@
     document.getElementById('mes-filtro-fixas').value = mesAtualStr;
     document.getElementById('mes-filtro-recorrentes').value = mesAtualStr;
 
-    // Correção: Tratamento caso o nó de membros esteja vazio no banco de dados para evitar o travamento "Carregando membros..."
     db.ref('familia/membros').on('value', (snapshot) => {
       const data = snapshot.val();
       membros = [];
