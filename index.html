@@ -103,7 +103,7 @@
                   <th class="p-2">Título</th>
                   <th class="p-2">Vencimento</th>
                   <th class="p-2">Valor</th>
-                  <th class="p-2">Status</th>
+                  <th class="p-2">Status / Pgto</th>
                   <th class="p-2 text-right">Ações</th>
                 </tr>
               </thead>
@@ -133,7 +133,7 @@
                   <th class="p-2">Título</th>
                   <th class="p-2">Valor</th>
                   <th class="p-2">Vencimento</th>
-                  <th class="p-2">Status</th>
+                  <th class="p-2">Status / Pgto</th>
                   <th class="p-2 text-right">Ações</th>
                 </tr>
               </thead>
@@ -198,7 +198,7 @@
     </div>
   </div>
 
-  <!-- MODAL FIXA (EXTRAS OU PADRÕES) -->
+  <!-- MODAL FIXA -->
   <div id="modal-fixa" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 hidden z-50">
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-xs rounded-xl p-4 space-y-3 shadow-2xl">
       <h3 id="modal-fixa-titulo" class="font-bold text-slate-900 dark:text-white text-xs">Editar Conta Fixa</h3>
@@ -253,7 +253,6 @@
     document.getElementById('mes-filtro-fixas').value = mesAtualStr;
     document.getElementById('mes-filtro-recorrentes').value = mesAtualStr;
 
-    // Gerenciar Tema Escuro / Claro
     function alternarTema() {
       const html = document.documentElement;
       const icone = document.getElementById('icone-tema');
@@ -268,7 +267,6 @@
       }
     }
 
-    // Carregar tema salvo
     if (localStorage.getItem('tema') === 'light') {
       document.documentElement.classList.remove('dark');
       document.getElementById('icone-tema').className = "fa-solid fa-sun";
@@ -295,7 +293,7 @@
 
     function solicitarPermissaoNotificacao() {
       if (!("Notification" in window)) {
-        alert("Este navegador não suporta notificações de celular/desktop.");
+        alert("Este navegador não suporta notificações.");
         return;
       }
       Notification.requestPermission().then(permission => {
@@ -320,14 +318,11 @@
     function verificarVencimentosParaNotificar() {
       const hojeData = new Date();
       hojeData.setHours(0,0,0,0);
-
       const todasContas = [...dadosFixas, ...dadosRecorrentes];
       todasContas.forEach(c => {
         if (!c.pago && c.vencimento) {
           const dataVenc = new Date(c.vencimento + 'T00:00:00');
-          const diffTime = dataVenc - hojeData;
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          
+          const diffDays = Math.ceil((dataVenc - hojeData) / (1000 * 60 * 60 * 24));
           if (diffDays >= 0 && diffDays <= 3) {
             dispararNotificacaoPush(c.titulo, c.vencimento);
           }
@@ -335,8 +330,13 @@
       });
     }
 
-    function calcularStatusVencimento(dataVencStr, pago) {
-      if (pago) return { texto: 'Quitada', classe: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' };
+    function calcularStatusVencimento(dataVencStr, pago, dataPgto) {
+      if (pago) {
+        return { 
+          texto: dataPgto ? `Quitada (${dataPgto})` : 'Quitada', 
+          classe: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' 
+        };
+      }
       if (!dataVencStr) return { texto: 'Pendente', classe: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30' };
 
       const hojeData = new Date();
@@ -468,8 +468,9 @@
         const encontrada = dadosFixas.find(c => c.mesRef === mesRef && c.titulo === nome);
         const valor = encontrada ? encontrada.valor : 0;
         const pago = encontrada ? encontrada.pago : false;
+        const dataPgto = encontrada ? encontrada.dataPgto : '';
         const venc = encontrada ? encontrada.vencimento : `${mesRef}-10`;
-        const statusObj = calcularStatusVencimento(venc, pago);
+        const statusObj = calcularStatusVencimento(venc, pago, dataPgto);
 
         containerPadrao.innerHTML += `
           <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-sm">
@@ -481,7 +482,7 @@
               </div>
             </div>
             <div class="text-xs font-bold text-slate-900 dark:text-white">R$ ${valor.toFixed(2)} <span class="text-[10px] text-slate-500 font-normal">(${venc})</span></div>
-            <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="w-full bg-slate-100 dark:bg-slate-800 text-[10px] py-1 rounded-lg text-slate-800 dark:text-white">${pago ? 'Desfazer' : 'Pagar'}</button>
+            <button onclick="processarPagamentoFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="w-full bg-slate-100 dark:bg-slate-800 text-[10px] py-1 rounded-lg text-slate-800 dark:text-white">${pago ? 'Desfazer Pagamento' : 'Pagar'}</button>
           </div>
         `;
       });
@@ -496,7 +497,7 @@
       }
 
       extras.forEach(item => {
-        const statusObj = calcularStatusVencimento(item.vencimento, item.pago);
+        const statusObj = calcularStatusVencimento(item.vencimento, item.pago, item.dataPgto);
         tabelaExtras.innerHTML += `
           <tr class="border-b border-slate-200 dark:border-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-950/40">
             <td class="p-2 text-slate-900 dark:text-white font-medium">${item.titulo}</td>
@@ -504,6 +505,7 @@
             <td class="p-2 text-emerald-600 dark:text-emerald-400 font-semibold">R$ ${item.valor.toFixed(2)}</td>
             <td class="p-2"><span class="px-2 py-0.5 rounded text-[9px] font-bold border ${statusObj.classe}">${statusObj.texto}</span></td>
             <td class="p-2 text-right space-x-1">
+              <button onclick="processarPagamentoFixaExtra('${item.id}', ${item.pago})" class="text-emerald-500 hover:text-emerald-400 px-1" title="Informar Pgto"><i class="fa-solid fa-check-circle"></i></button>
               <button onclick="abrirModalEditarFixa('${item.id}', '${item.titulo}', ${item.valor}, '${item.vencimento}', false)" class="text-blue-500 dark:text-blue-400 hover:text-blue-300 px-1"><i class="fa-solid fa-pen"></i></button>
               <button onclick="deletarFixa('${item.id}')" class="text-red-400 hover:text-red-300 px-1"><i class="fa-solid fa-trash"></i></button>
             </td>
@@ -512,14 +514,32 @@
       });
     }
 
-    function alternarStatusFixaPadrao(nome, statusAtual, val, venc) {
+    function processarPagamentoFixaPadrao(nome, statusAtual, val, venc) {
       const mesRef = document.getElementById('mes-filtro-fixas').value;
       const encontrada = dadosFixas.find(c => c.mesRef === mesRef && c.titulo === nome);
-      const novoStatus = !statusAtual;
-      if (encontrada) {
-        db.ref('familia/fixas/' + encontrada.id).update({ pago: novoStatus });
+      
+      if (!statusAtual) {
+        const dataPgtoInput = prompt("Informe a data em que o pagamento foi realizado (AAAA-MM-DD):", new Date().toISOString().slice(0, 10));
+        if (!dataPgtoInput) return;
+        if (encontrada) {
+          db.ref('familia/fixas/' + encontrada.id).update({ pago: true, dataPgto: dataPgtoInput });
+        } else {
+          db.ref('familia/fixas').push({ titulo: nome, valor: val, mesRef, vencimento: venc, pago: true, dataPgto: dataPgtoInput });
+        }
       } else {
-        db.ref('familia/fixas').push({ titulo: nome, valor: val, mesRef, vencimento: venc, pago: novoStatus });
+        if (encontrada) {
+          db.ref('familia/fixas/' + encontrada.id).update({ pago: false, dataPgto: '' });
+        }
+      }
+    }
+
+    function processarPagamentoFixaExtra(id, statusAtual) {
+      if (!statusAtual) {
+        const dataPgtoInput = prompt("Informe a data em que o pagamento foi realizado (AAAA-MM-DD):", new Date().toISOString().slice(0, 10));
+        if (!dataPgtoInput) return;
+        db.ref('familia/fixas/' + id).update({ pago: true, dataPgto: dataPgtoInput });
+      } else {
+        db.ref('familia/fixas/' + id).update({ pago: false, dataPgto: '' });
       }
     }
 
@@ -539,11 +559,7 @@
       document.getElementById('fixa-titulo').value = titulo;
       document.getElementById('fixa-valor').value = valor;
       document.getElementById('fixa-vencimento').value = vencimento;
-      if (ehPadrao) {
-        document.getElementById('fixa-titulo').disabled = true;
-      } else {
-        document.getElementById('fixa-titulo').disabled = false;
-      }
+      document.getElementById('fixa-titulo').disabled = ehPadrao;
       document.getElementById('modal-fixa').classList.remove('hidden');
     }
 
@@ -564,7 +580,7 @@
         if (existente) {
           db.ref('familia/fixas/' + existente.id).update({ valor, vencimento }).then(() => fecharModalFixa());
         } else {
-          db.ref('familia/fixas').push({ titulo, valor, vencimento, mesRef, pago: false }).then(() => fecharModalFixa());
+          db.ref('familia/fixas').push({ titulo, valor, vencimento, mesRef, pago: false, dataPgto: '' }).then(() => fecharModalFixa());
         }
       }
     }
@@ -577,14 +593,58 @@
 
     function abrirModalRecorrente() { document.getElementById('modal-recorrente').classList.remove('hidden'); }
     function fecharModalRecorrente() { document.getElementById('modal-recorrente').classList.add('hidden'); }
+    
     function salvarContaRecorrente() {
       const titulo = document.getElementById('rec-titulo').value;
       const valor = parseFloat(document.getElementById('rec-valor').value);
       const vencimento = document.getElementById('rec-vencimento').value;
       if (!titulo || isNaN(valor) || !vencimento) return;
-      db.ref('familia/recorrentes').push({ titulo, valor, vencimento, mesRef: vencimento.slice(0, 7), pago: false }).then(() => fecharModalRecorrente());
+      db.ref('familia/recorrentes').push({ titulo, valor, vencimento, mesRef: vencimento.slice(0, 7), pago: false, dataPgto: '' }).then(() => fecharModalRecorrente());
     }
-    function carregarContasRecorrentes() {}
+
+    function carregarContasRecorrentes() {
+      const mesRef = document.getElementById('mes-filtro-recorrentes').value;
+      const tabelaRec = document.getElementById('tabela-recorrentes');
+      tabelaRec.innerHTML = '';
+      
+      const filtradas = dadosRecorrentes.filter(c => c.mesRef === mesRef);
+      if (filtradas.length === 0) {
+        tabelaRec.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-slate-500 text-xs">Nenhuma conta recorrente para este mês.</td></tr>`;
+        return;
+      }
+
+      filtradas.forEach(item => {
+        const statusObj = calcularStatusVencimento(item.vencimento, item.pago, item.dataPgto);
+        tabelaRec.innerHTML += `
+          <tr class="border-b border-slate-200 dark:border-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-950/40">
+            <td class="p-2 text-slate-900 dark:text-white font-medium">${item.titulo}</td>
+            <td class="p-2 text-purple-600 dark:text-purple-400 font-semibold">R$ ${item.valor.toFixed(2)}</td>
+            <td class="p-2 text-slate-600 dark:text-slate-300">${item.vencimento}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded text-[9px] font-bold border ${statusObj.classe}">${statusObj.texto}</span></td>
+            <td class="p-2 text-right space-x-1">
+              <button onclick="processarPagamentoRecorrente('${item.id}', ${item.pago})" class="text-emerald-500 hover:text-emerald-400 px-1" title="Informar Pgto"><i class="fa-solid fa-check-circle"></i></button>
+              <button onclick="deletarRecorrente('${item.id}')" class="text-red-400 hover:text-red-300 px-1"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function processarPagamentoRecorrente(id, statusAtual) {
+      if (!statusAtual) {
+        const dataPgtoInput = prompt("Informe a data em que o pagamento foi realizado (AAAA-MM-DD):", new Date().toISOString().slice(0, 10));
+        if (!dataPgtoInput) return;
+        db.ref('familia/recorrentes/' + id).update({ pago: true, dataPgto: dataPgtoInput });
+      } else {
+        db.ref('familia/recorrentes/' + id).update({ pago: false, dataPgto: '' });
+      }
+    }
+
+    function deletarRecorrente(id) {
+      if (confirm("Deseja excluir esta conta recorrente?")) {
+        db.ref('familia/recorrentes/' + id).remove();
+      }
+    }
 
     function popularSelectTitulosComparativos() {
       const select = document.getElementById('filtro-titulo-comparativo');
