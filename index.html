@@ -21,87 +21,87 @@
 
   <!-- TELA DE LOGIN -->
   <div id="tela-login" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl text-center">
-      <div class="w-12 h-12 bg-purple-600/20 border border-purple-500/40 rounded-full flex items-center justify-center mx-auto mb-2">
-        <i class="fa-solid fa-wallet text-purple-400 text-xl"></i>
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-5 space-y-3 shadow-2xl text-center">
+      <div class="w-10 h-10 bg-purple-600/20 border border-purple-500/40 rounded-full flex items-center justify-center mx-auto mb-1">
+        <i class="fa-solid fa-wallet text-purple-400 text-base"></i>
       </div>
-      <h2 class="text-lg font-bold text-white">FinanceSmart</h2>
-      <p class="text-xs text-slate-400">Selecione seu perfil e digite sua senha de acesso</p>
+      <h2 class="text-base font-bold text-white">FinanceSmart</h2>
+      <p class="text-[11px] text-slate-400">Selecione seu perfil e digite sua senha de acesso</p>
       
-      <div class="space-y-3 text-left pt-2">
+      <div class="space-y-2.5 text-left pt-1">
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Membro da Família</label>
-          <select id="login-membro" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs focus:outline-none focus:border-purple-500 transition-all">
+          <label class="block text-[11px] text-slate-400 mb-1">Membro da Família</label>
+          <select id="login-membro" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500 transition-all">
             <option value="">Carregando membros...</option>
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Senha</label>
-          <input type="password" id="login-senha" placeholder="Sua senha" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs focus:outline-none focus:border-purple-500 transition-all">
+          <label class="block text-[11px] text-slate-400 mb-1">Senha</label>
+          <input type="password" id="login-senha" placeholder="Sua senha" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500 transition-all">
         </div>
-        <button onclick="realizarLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2.5 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-purple-600/20">Entrar no App</button>
+        <button onclick="realizarLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold transition-all shadow-lg shadow-purple-600/20">Entrar no App</button>
         
         <div id="aviso-sem-membros" class="hidden pt-2 border-t border-slate-700 text-center">
           <p class="text-[11px] text-amber-400 mb-2">Nenhum membro encontrado no banco.</p>
-          <button onclick="cadastrarMembroInicial()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-xl text-xs font-semibold">Cadastrar Membro Administrador</button>
+          <button onclick="cadastrarMembroInicial()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-1.5 rounded-lg text-xs font-semibold">Cadastrar Administrador</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- APLICATIVO PRINCIPAL -->
-  <div id="app-conteudo" class="p-4 max-w-6xl mx-auto space-y-5 hidden">
-    <header class="bg-slate-800 p-3.5 rounded-2xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row justify-between items-center gap-3">
-      <div class="flex items-center gap-3">
-        <div id="cabecalho-foto-container" class="w-10 h-10 rounded-full bg-purple-600 border-2 border-purple-400 flex items-center justify-center overflow-hidden font-bold text-sm shadow-md shrink-0">
+  <div id="app-conteudo" class="p-3 max-w-6xl mx-auto space-y-4 hidden">
+    <header class="bg-slate-800 p-3 rounded-xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row justify-between items-center gap-2.5">
+      <div class="flex items-center gap-2.5">
+        <div id="cabecalho-foto-container" class="w-9 h-9 rounded-full bg-purple-600 border-2 border-purple-400 flex items-center justify-center overflow-hidden font-bold text-xs shadow-md shrink-0">
           <span id="cabecalho-iniciais">U</span>
         </div>
         <div>
-          <h1 class="text-base font-bold text-white">FinanceSmart</h1>
-          <p class="text-[11px] text-slate-400">Logado: <span id="usuario-logado-nome" class="text-purple-400 font-semibold"></span></p>
+          <h1 class="text-sm font-bold text-white">FinanceSmart</h1>
+          <p class="text-[10px] text-slate-400">Logado: <span id="usuario-logado-nome" class="text-purple-400 font-semibold"></span></p>
         </div>
       </div>
 
-      <div class="flex flex-wrap gap-1 bg-slate-900 p-1.5 rounded-xl border border-slate-700 text-xs">
-        <button onclick="mudarAba('fixas')" id="btn-aba-fixas" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-emerald-600 text-white shadow">Fixas</button>
-        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-300 hover:text-white">Recorrentes</button>
-        <button onclick="mudarAba('dashboard')" id="btn-aba-dashboard" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-300 hover:text-white">Dashboard</button>
-        <button onclick="mudarAba('membros')" id="btn-aba-membros" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-300 hover:text-white">Membros</button>
+      <div class="flex flex-wrap gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 text-xs">
+        <button onclick="mudarAba('fixas')" id="btn-aba-fixas" class="px-2.5 py-1 rounded-md font-medium transition-all bg-emerald-600 text-white shadow">Fixas</button>
+        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-300 hover:text-white">Recorrentes</button>
+        <button onclick="mudarAba('dashboard')" id="btn-aba-dashboard" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-300 hover:text-white">Dashboard</button>
+        <button onclick="mudarAba('membros')" id="btn-aba-membros" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-300 hover:text-white">Membros</button>
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="exportarPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-lg shadow-blue-600/20"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+        <button onclick="exportarPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all shadow-lg shadow-blue-600/20"><i class="fa-solid fa-file-pdf"></i> PDF</button>
       </div>
     </header>
 
-    <div id="conteudo-pdf" class="space-y-5">
+    <div id="conteudo-pdf" class="space-y-4">
       <!-- ABA FIXAS -->
-      <div id="aba-fixas" class="space-y-3.5">
-        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-3.5 rounded-2xl border border-slate-700/80 gap-3">
-          <div class="flex items-center gap-2.5 w-full sm:w-auto">
-            <span class="text-xs font-medium text-slate-400">Mês de Referência:</span>
-            <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
+      <div id="aba-fixas" class="space-y-3">
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700/80 gap-2.5">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <span class="text-[11px] font-medium text-slate-400">Mês de Referência:</span>
+            <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-900 border border-slate-700 p-1.5 rounded-lg text-white text-xs focus:outline-none focus:border-emerald-500">
           </div>
-          <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 w-full sm:w-auto justify-center shadow-lg shadow-emerald-600/20"><i class="fa-solid fa-plus"></i> Nova Conta Fixa Extra</button>
+          <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 w-full sm:w-auto justify-center shadow-lg shadow-emerald-600/20"><i class="fa-solid fa-plus"></i> Nova Conta Fixa Extra</button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3" id="cards-fixas-padrao"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5" id="cards-fixas-padrao"></div>
 
-        <div class="bg-slate-800 rounded-2xl border border-slate-700/80 overflow-hidden shadow-xl">
-          <div class="p-3.5 border-b border-slate-700 font-bold text-white text-xs flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> Outras Contas Fixas do Mês</div>
+        <div class="bg-slate-800 rounded-xl border border-slate-700/80 overflow-hidden shadow-xl">
+          <div class="p-3 border-b border-slate-700 font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-list-check text-emerald-400"></i> Outras Contas Fixas do Mês</div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
-                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-700 text-[11px]">
-                  <th class="p-3">Título</th>
-                  <th class="p-3">Vencimento</th>
-                  <th class="p-3">Valor</th>
-                  <th class="p-3">Status</th>
-                  <th class="p-3 text-right">Ações</th>
+                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-700 text-[10px]">
+                  <th class="p-2.5">Título</th>
+                  <th class="p-2.5">Vencimento</th>
+                  <th class="p-2.5">Valor</th>
+                  <th class="p-2.5">Status</th>
+                  <th class="p-2.5 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody id="tabela-fixas-extras">
-                <tr><td colspan="5" class="p-3 text-center text-slate-500">Nenhuma conta extra cadastrada.</td></tr>
+                <tr><td colspan="5" class="p-3 text-center text-slate-500 text-xs">Nenhuma conta extra cadastrada.</td></tr>
               </tbody>
             </table>
           </div>
@@ -109,30 +109,30 @@
       </div>
 
       <!-- ABA RECORRENTES -->
-      <div id="aba-recorrentes" class="space-y-3.5 hidden">
-        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-3.5 rounded-2xl border border-slate-700/80 gap-3">
-          <div class="flex items-center gap-2.5 w-full sm:w-auto">
-            <span class="text-xs font-medium text-slate-400">Mês Recorrente:</span>
-            <input type="month" id="mes-filtro-recorrentes" onchange="carregarContasRecorrentes()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-xl text-xs focus:outline-none focus:border-purple-500">
+      <div id="aba-recorrentes" class="space-y-3 hidden">
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700/80 gap-2.5">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <span class="text-[11px] font-medium text-slate-400">Mês Recorrente:</span>
+            <input type="month" id="mes-filtro-recorrentes" onchange="carregarContasRecorrentes()" class="bg-slate-900 border border-slate-700 p-1.5 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500">
           </div>
-          <button onclick="abrirModalRecorrente()" class="bg-purple-600 hover:bg-purple-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 w-full sm:w-auto justify-center shadow-lg shadow-purple-600/20"><i class="fa-solid fa-plus"></i> Nova Conta Recorrente</button>
+          <button onclick="abrirModalRecorrente()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 w-full sm:w-auto justify-center shadow-lg shadow-purple-600/20"><i class="fa-solid fa-plus"></i> Nova Conta Recorrente</button>
         </div>
 
-        <div class="bg-slate-800 rounded-2xl border border-slate-700/80 overflow-hidden shadow-xl">
-          <div class="p-3.5 border-b border-slate-700 font-bold text-white text-xs flex items-center gap-2"><i class="fa-solid fa-credit-card text-purple-400"></i> Contas e Parcelamentos do Mês</div>
+        <div class="bg-slate-800 rounded-xl border border-slate-700/80 overflow-hidden shadow-xl">
+          <div class="p-3 border-b border-slate-700 font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-credit-card text-purple-400"></i> Contas e Parcelamentos do Mês</div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
-                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-700 text-[11px]">
-                  <th class="p-3">Título</th>
-                  <th class="p-3">Valor</th>
-                  <th class="p-3">Vencimento</th>
-                  <th class="p-3">Status</th>
-                  <th class="p-3 text-right">Ações</th>
+                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-700 text-[10px]">
+                  <th class="p-2.5">Título</th>
+                  <th class="p-2.5">Valor</th>
+                  <th class="p-2.5">Vencimento</th>
+                  <th class="p-2.5">Status</th>
+                  <th class="p-2.5 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody id="tabela-recorrentes">
-                <tr><td colspan="5" class="p-3 text-center text-slate-500">Nenhuma conta recorrente neste mês.</td></tr>
+                <tr><td colspan="5" class="p-3 text-center text-slate-500 text-xs">Nenhuma conta recorrente neste mês.</td></tr>
               </tbody>
             </table>
           </div>
@@ -140,41 +140,46 @@
       </div>
 
       <!-- ABA DASHBOARD -->
-      <div id="aba-dashboard" class="space-y-4 hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700/80 shadow-xl space-y-2">
+      <div id="aba-dashboard" class="space-y-3 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/80 shadow-xl space-y-2">
             <div class="flex justify-between items-center">
               <h3 class="font-bold text-white text-xs">Valor Total das Contas Mês a Mês</h3>
               <span id="dash-total-geral" class="text-xs font-semibold text-emerald-400">R$ 0,00</span>
             </div>
-            <div class="relative h-60"><canvas id="graficoTotaisMes"></canvas></div>
+            <div class="relative h-52"><canvas id="graficoTotaisMes"></canvas></div>
           </div>
-          <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700/80 shadow-xl space-y-2">
+          <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/80 shadow-xl space-y-2">
             <h3 class="font-bold text-white text-xs">Comparativo por Título Mês a Mês</h3>
-            <div class="relative h-60"><canvas id="graficoComparativoTitulos"></canvas></div>
+            <div class="relative h-52"><canvas id="graficoComparativoTitulos"></canvas></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ABA MEMBROS -->
-    <div id="aba-membros" class="space-y-4 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700/80 space-y-3 h-fit shadow-xl">
-          <h3 class="font-bold text-white text-xs"><i class="fa-solid fa-user-plus text-purple-400"></i> Cadastrar Novo Membro</h3>
+    <div id="aba-membros" class="space-y-3 hidden">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700/80 space-y-2.5 h-fit shadow-xl">
+          <h3 class="font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-user-plus text-purple-400"></i> Cadastrar Novo Membro</h3>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Nome</label>
-            <input type="text" id="membro-nome" placeholder="Nome do membro..." class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs focus:outline-none focus:border-purple-500">
+            <label class="block text-[10px] text-slate-400 mb-1">Nome</label>
+            <input type="text" id="membro-nome" placeholder="Nome do membro..." class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500">
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">Senha de Acesso</label>
-            <input type="password" id="membro-senha" placeholder="Senha" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs focus:outline-none focus:border-purple-500">
+            <label class="block text-[10px] text-slate-400 mb-1">Senha de Acesso</label>
+            <input type="password" id="membro-senha" placeholder="Senha" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500">
           </div>
-          <button onclick="salvarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2.5 rounded-xl text-xs font-semibold transition-all">Salvar Membro</button>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-1">Foto de Perfil (Galeria):</label>
+            <input type="file" id="membro-arquivo" accept="image/*" onchange="converterFotoMembro(event)" class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white file:font-semibold">
+            <input type="hidden" id="membro-foto-base64">
+          </div>
+          <button onclick="salvarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold transition-all">Salvar Membro</button>
         </div>
 
-        <div class="md:col-span-2 bg-slate-800 p-4 rounded-2xl border border-slate-700/80 space-y-3 shadow-xl">
-          <h3 class="font-bold text-white text-xs"><i class="fa-solid fa-users text-purple-400"></i> Membros Cadastrados</h3>
+        <div class="md:col-span-2 bg-slate-800 p-3.5 rounded-xl border border-slate-700/80 space-y-2.5 shadow-xl">
+          <h3 class="font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-users text-purple-400"></i> Membros Cadastrados</h3>
           <div id="lista-membros-cadastrados" class="space-y-2"></div>
         </div>
       </div>
@@ -183,27 +188,27 @@
 
   <!-- MODAIS -->
   <div id="modal-fixa" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-xs rounded-2xl p-5 space-y-3.5 shadow-2xl">
-      <h3 class="font-bold text-white text-sm">Adicionar Conta Fixa Extra</h3>
-      <input type="text" id="fixa-titulo" placeholder="Título..." class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs">
-      <input type="number" step="0.01" id="fixa-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs">
-      <input type="date" id="fixa-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs">
-      <div class="flex justify-end gap-2">
-        <button onclick="fecharModalFixa()" class="bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs">Cancelar</button>
-        <button onclick="salvarContaFixa()" class="bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs">Salvar</button>
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-xs rounded-xl p-4 space-y-3 shadow-2xl">
+      <h3 class="font-bold text-white text-xs">Adicionar Conta Fixa Extra</h3>
+      <input type="text" id="fixa-titulo" placeholder="Título..." class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
+      <input type="number" step="0.01" id="fixa-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
+      <input type="date" id="fixa-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
+      <div class="flex justify-end gap-1.5">
+        <button onclick="fecharModalFixa()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded-lg text-xs">Cancelar</button>
+        <button onclick="salvarContaFixa()" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs">Salvar</button>
       </div>
     </div>
   </div>
 
   <div id="modal-recorrente" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-xs rounded-2xl p-5 space-y-3.5 shadow-2xl">
-      <h3 class="font-bold text-white text-sm">Nova Conta Recorrente</h3>
-      <input type="text" id="rec-titulo" placeholder="Título" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs">
-      <input type="number" step="0.01" id="rec-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs">
-      <input type="date" id="rec-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs">
-      <div class="flex justify-end gap-2">
-        <button onclick="fecharModalRecorrente()" class="bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs">Cancelar</button>
-        <button onclick="salvarContaRecorrente()" class="bg-purple-600 text-white px-3 py-1.5 rounded-xl text-xs">Salvar</button>
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-xs rounded-xl p-4 space-y-3 shadow-2xl">
+      <h3 class="font-bold text-white text-xs">Nova Conta Recorrente</h3>
+      <input type="text" id="rec-titulo" placeholder="Título" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
+      <input type="number" step="0.01" id="rec-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
+      <input type="date" id="rec-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
+      <div class="flex justify-end gap-1.5">
+        <button onclick="fecharModalRecorrente()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded-lg text-xs">Cancelar</button>
+        <button onclick="salvarContaRecorrente()" class="bg-purple-600 text-white px-2.5 py-1.5 rounded-lg text-xs">Salvar</button>
       </div>
     </div>
   </div>
@@ -234,7 +239,6 @@
     document.getElementById('mes-filtro-fixas').value = mesAtualStr;
     document.getElementById('mes-filtro-recorrentes').value = mesAtualStr;
 
-    // Escuta membros com fallback se estiver vazio
     db.ref('familia/membros').on('value', (snapshot) => {
       const data = snapshot.val();
       membros = [];
@@ -265,11 +269,29 @@
       if (!nome) return;
       const senha = prompt("Digite uma senha:", "1234");
       
-      db.ref('familia/membros').push({ nome, senha: senha || '' }).then(() => {
-        alert('Membro criado com sucesso! Atualize a página ou selecione no campo.');
+      db.ref('familia/membros').push({ nome, senha: senha || '', foto: '' }).then(() => {
+        alert('Membro criado com sucesso!');
       }).catch(err => {
         alert('Erro ao salvar: ' + err.message);
       });
+    }
+
+    function converterFotoMembro(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = 100; canvas.height = 100;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, 100, 100);
+          document.getElementById('membro-foto-base64').value = canvas.toDataURL('image/jpeg', 0.7);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     function realizarLogin() {
@@ -286,7 +308,13 @@
 
       usuarioLogado = membro || { nome: nomeSel };
       document.getElementById('usuario-logado-nome').innerText = usuarioLogado.nome;
-      document.getElementById('cabecalho-iniciais').innerText = usuarioLogado.nome.charAt(0).toUpperCase();
+      
+      const containerFoto = document.getElementById('cabecalho-foto-container');
+      if (usuarioLogado.foto) {
+        containerFoto.innerHTML = `<img src="${usuarioLogado.foto}" class="w-full h-full object-cover">`;
+      } else {
+        containerFoto.innerHTML = `<span id="cabecalho-iniciais">${usuarioLogado.nome.charAt(0).toUpperCase()}</span>`;
+      }
 
       document.getElementById('tela-login').classList.add('hidden');
       document.getElementById('app-conteudo').classList.remove('hidden');
@@ -296,21 +324,24 @@
     function mudarAba(aba) {
       ['fixas', 'recorrentes', 'dashboard', 'membros'].forEach(a => {
         document.getElementById(`aba-${a}`).classList.add('hidden');
-        document.getElementById(`btn-aba-${a}`).className = "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-300 hover:text-white";
+        document.getElementById(`btn-aba-${a}`).className = "px-2.5 py-1 rounded-md font-medium transition-all text-slate-300 hover:text-white";
       });
       document.getElementById(`aba-${aba}`).classList.remove('hidden');
-      document.getElementById(`btn-aba-${aba}`).className = "px-3 py-1.5 rounded-lg font-medium transition-all bg-emerald-600 text-white shadow";
+      document.getElementById(`btn-aba-${aba}`).className = "px-2.5 py-1 rounded-md font-medium transition-all bg-emerald-600 text-white shadow";
       if (aba === 'dashboard') atualizarGraficos();
     }
 
     function salvarMembro() {
       const nome = document.getElementById('membro-nome').value.trim();
       const senha = document.getElementById('membro-senha').value;
+      const foto = document.getElementById('membro-foto-base64').value;
       if (!nome) { alert('Digite o nome.'); return; }
 
-      db.ref('familia/membros').push({ nome, senha: senha || '' }).then(() => {
+      db.ref('familia/membros').push({ nome, senha: senha || '', foto: foto || '' }).then(() => {
         document.getElementById('membro-nome').value = '';
         document.getElementById('membro-senha').value = '';
+        document.getElementById('membro-foto-base64').value = '';
+        document.getElementById('membro-arquivo').value = '';
         alert('Membro salvo!');
       });
     }
@@ -324,8 +355,13 @@
       }
       membros.forEach(m => {
         container.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/60 text-xs">
-            <span class="text-white font-medium">${m.nome}</span>
+          <div class="flex justify-between items-center bg-slate-900/60 p-2 rounded-xl border border-slate-700/60 text-xs">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center overflow-hidden font-bold text-white shrink-0 text-xs">
+                ${m.foto ? `<img src="${m.foto}" class="w-full h-full object-cover">` : m.nome.charAt(0)}
+              </div>
+              <span class="text-white font-medium">${m.nome}</span>
+            </div>
             <button onclick="db.ref('familia/membros/${m.id}').remove()" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
           </div>
         `;
@@ -360,13 +396,13 @@
         const venc = encontrada ? encontrada.vencimento : `${mesRef}-10`;
 
         containerPadrao.innerHTML += `
-          <div class="bg-slate-800 p-3.5 rounded-2xl border border-slate-700/80 space-y-2">
+          <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/80 space-y-1.5 shadow-sm">
             <div class="flex justify-between items-center">
               <span class="font-bold text-white text-xs">${nome}</span>
               <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${pago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${pago ? 'Quitada' : 'Pendente'}</span>
             </div>
-            <div class="text-base font-bold text-white">R$ ${valor.toFixed(2)}</div>
-            <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="w-full bg-slate-700 text-xs py-1 rounded-xl text-white">${pago ? 'Desfazer' : 'Pagar'}</button>
+            <div class="text-sm font-bold text-white">R$ ${valor.toFixed(2)}</div>
+            <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="w-full bg-slate-700 text-[11px] py-1 rounded-lg text-white">${pago ? 'Desfazer' : 'Pagar'}</button>
           </div>
         `;
       });
