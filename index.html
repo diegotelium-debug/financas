@@ -11,6 +11,9 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  
+  <!-- html2pdf para exportação em PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -47,7 +50,10 @@
     <!-- Cabeçalho Principal com Abas -->
     <header class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
       <div class="flex items-center gap-3">
-        <i class="fa-solid fa-wallet text-emerald-500 text-2xl"></i>
+        <!-- Foto do Membro Logado -->
+        <div id="cabecalho-foto-container" class="w-12 h-12 rounded-full bg-purple-600 border-2 border-purple-400 flex items-center justify-center overflow-hidden font-bold text-lg shadow-md">
+          <span id="cabecalho-iniciais">U</span>
+        </div>
         <div>
           <h1 class="text-xl font-bold text-white flex items-center gap-2">FinanceSmart</h1>
           <p class="text-xs text-slate-400">Logado como: <span id="usuario-logado-nome" class="text-purple-400 font-semibold"></span></p>
@@ -57,14 +63,14 @@
       <!-- Abas de Navegação -->
       <div class="flex flex-wrap gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 text-xs">
         <button onclick="mudarAba('fixas')" id="btn-aba-fixas" class="px-3 py-2 rounded-md font-medium transition-all bg-emerald-600 text-white">Fixas</button>
-        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Parceladas</button>
+        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Recorrentes</button>
         <button onclick="mudarAba('dashboard')" id="btn-aba-dashboard" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Dashboard</button>
         <button onclick="mudarAba('membros')" id="btn-aba-membros" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Membros</button>
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="compartilharResumo()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all">
-          <i class="fa-solid fa-share-nodes"></i> Compartilhar
+        <button onclick="exportarPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-file-pdf"></i> Compartilhar PDF
         </button>
         <button onclick="solicitarPermissaoNotificacao()" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all" title="Ativar Alertas">
           <i class="fa-solid fa-bell"></i>
@@ -72,86 +78,91 @@
       </div>
     </header>
 
-        <!-- ABA 1: CONTAS FIXAS -->
-    <div id="aba-fixas" class="space-y-4">
-      <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 gap-3">
-        <div class="flex items-center gap-3 w-full sm:w-auto">
-          <span class="text-xs text-slate-400">Mês:</span>
-          <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm">
+    <!-- Área Exportável em PDF -->
+    <div id="conteudo-pdf" class="space-y-6">
+
+      <!-- ABA 1: CONTAS FIXAS -->
+      <div id="aba-fixas" class="space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 gap-3">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <span class="text-xs text-slate-400">Mês:</span>
+            <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm">
+          </div>
+          <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 w-full sm:w-auto justify-center">
+            <i class="fa-solid fa-plus"></i> Nova Conta Fixa
+          </button>
         </div>
-        <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 w-full sm:w-auto justify-center">
-          <i class="fa-solid fa-plus"></i> Nova Conta Fixa
-        </button>
-      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="cards-fixas-padrao">
-        <!-- Preenchido via JS (Aluguel, Carro, Internet, Transporte Escolar) -->
-      </div>
-
-      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
-        <div class="p-4 border-b border-slate-700 font-bold text-white">Outras Contas Fixas do Mês</div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead>
-              <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
-                <th class="p-3">Título</th>
-                <th class="p-3">Vencimento</th>
-                <th class="p-3">Valor</th>
-                <th class="p-3">Status</th>
-                <th class="p-3 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="tabela-fixas-extras">
-              <tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhuma conta extra cadastrada.</td></tr>
-            </tbody>
-          </table>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cards-fixas-padrao">
+          <!-- Preenchido via JS (Aluguel, Carro, Internet, Transporte Escolar, Enel) -->
         </div>
-      </div>
-    </div>
 
-    <!-- ABA 2: CONTAS RECORRENTES / PARCELADAS -->
-    <div id="aba-recorrentes" class="space-y-4 hidden">
-      <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
-        <h2 class="font-bold text-white">Gestão de Parcelados e Recorrentes</h2>
-        <button onclick="abrirModalParcelada()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-          <i class="fa-solid fa-plus"></i> Nova Conta Parcelada
-        </button>
-      </div>
-
-      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead>
-              <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
-                <th class="p-3">Título</th>
-                <th class="p-3">Parcela Atual</th>
-                <th class="p-3">Valor da Parcela</th>
-                <th class="p-3">Vencimento</th>
-                <th class="p-3">Status</th>
-                <th class="p-3 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="tabela-parceladas">
-              <tr><td colspan="6" class="p-4 text-center text-slate-500">Nenhuma conta parcelada cadastrada.</td></tr>
-            </tbody>
-          </table>
+        <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
+          <div class="p-4 border-b border-slate-700 font-bold text-white">Outras Contas Fixas do Mês</div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
+                  <th class="p-3">Título</th>
+                  <th class="p-3">Vencimento</th>
+                  <th class="p-3">Valor</th>
+                  <th class="p-3">Status / Data Pgto</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-fixas-extras">
+                <tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhuma conta extra cadastrada.</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ABA 3: DASHBOARD -->
-    <div id="aba-dashboard" class="space-y-4 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-          <h3 class="font-bold text-white mb-3 text-sm">Gastos de Contas Fixas por Mês</h3>
-          <div class="relative h-64"><canvas id="graficoFixas"></canvas></div>
+      <!-- ABA 2: CONTAS RECORRENTES -->
+      <div id="aba-recorrentes" class="space-y-4 hidden">
+        <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+          <h2 class="font-bold text-white">Gestão de Contas Recorrentes (Nubank, Enel, etc.)</h2>
+          <button onclick="abrirModalRecorrente()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Nova Conta Recorrente
+          </button>
         </div>
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-          <h3 class="font-bold text-white mb-3 text-sm">Comparativo com Meses Anteriores</h3>
-          <div class="relative h-64"><canvas id="graficoComparativo"></canvas></div>
+
+        <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
+                  <th class="p-3">Título</th>
+                  <th class="p-3">Mês Ref</th>
+                  <th class="p-3">Valor</th>
+                  <th class="p-3">Vencimento</th>
+                  <th class="p-3">Modo / Status</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-recorrentes">
+                <tr><td colspan="6" class="p-4 text-center text-slate-500">Nenhuma conta recorrente cadastrada.</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
+
+      <!-- ABA 3: DASHBOARD -->
+      <div id="aba-dashboard" class="space-y-4 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+            <h3 class="font-bold text-white mb-3 text-sm">Gastos de Contas Fixas por Mês</h3>
+            <div class="relative h-64"><canvas id="graficoFixas"></canvas></div>
+          </div>
+          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+            <h3 class="font-bold text-white mb-3 text-sm">Comparativo com Meses Anteriores</h3>
+            <div class="relative h-64"><canvas id="graficoComparativo"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- Fim do conteúdo PDF -->
 
     <!-- ABA 4: MEMBROS & SENHAS -->
     <div id="aba-membros" class="space-y-4 hidden">
@@ -186,8 +197,8 @@
   <!-- Modal Conta Fixa / Extra -->
   <div id="modal-fixa" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
     <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 space-y-3">
-      <h3 class="font-bold text-white text-base">Adicionar Conta Fixa</h3>
-      <input type="text" id="fixa-titulo" placeholder="Título (Ex: Internet, Aluguel...)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <h3 class="font-bold text-white text-base">Adicionar Conta Fixa Extra</h3>
+      <input type="text" id="fixa-titulo" placeholder="Título..." class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
       <input type="number" step="0.01" id="fixa-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
       <input type="date" id="fixa-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
       <div class="flex justify-end gap-2 pt-2">
@@ -197,17 +208,30 @@
     </div>
   </div>
 
-  <!-- Modal Conta Parcelada -->
-  <div id="modal-parcelada" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+  <!-- Modal Conta Recorrente -->
+  <div id="modal-recorrente" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
     <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 space-y-3">
-      <h3 class="font-bold text-white text-base">Nova Conta Parcelada / Recorrente</h3>
-      <input type="text" id="parc-titulo" placeholder="Título (Ex: Compra Celular)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-      <input type="number" step="0.01" id="parc-valor-total" placeholder="Valor Total R$" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-      <input type="number" id="parc-qtd" placeholder="Quantidade de Parcelas" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-      <input type="date" id="parc-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <h3 class="font-bold text-white text-base">Nova Conta Recorrente</h3>
+      <input type="text" id="rec-titulo" placeholder="Título (Ex: Fatura Nubank, Enel)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <input type="number" step="0.01" id="rec-valor" placeholder="Valor R$ (ou Total se parcelado)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <input type="date" id="rec-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Modo de Pagamento</label>
+        <select id="rec-modo" onchange="alternarCamposParcelamento()" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+          <option value="vista">Pago à vista / Pendente simples</option>
+          <option value="parcelado">Parcelado</option>
+        </select>
+      </div>
+
+      <div id="bloco-qtd-parcelas" class="hidden">
+        <label class="block text-xs text-slate-400 mb-1">Quantidade de Parcelas</label>
+        <input type="number" id="rec-qtd" placeholder="Ex: 5" value="1" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      </div>
+
       <div class="flex justify-end gap-2 pt-2">
-        <button onclick="fecharModalParcelada()" class="bg-slate-700 text-white px-3 py-1.5 rounded text-xs">Cancelar</button>
-        <button onclick="salvarContaParcelada()" class="bg-purple-600 text-white px-3 py-1.5 rounded text-xs">Gerar Parcelas</button>
+        <button onclick="fecharModalRecorrente()" class="bg-slate-700 text-white px-3 py-1.5 rounded text-xs">Cancelar</button>
+        <button onclick="salvarContaRecorrente()" class="bg-purple-600 text-white px-3 py-1.5 rounded text-xs">Salvar</button>
       </div>
     </div>
   </div>
@@ -227,9 +251,9 @@
 
     let membros = [];
     let usuarioLogado = null;
-    let contasFixasPadraoNomes = ['Aluguel', 'Carro', 'Internet', 'Transporte Escolar'];
+    let contasFixasPadraoNomes = ['Aluguel', 'Carro', 'Internet', 'Transporte Escolar', 'Enel'];
     let dadosFixas = [];
-    let dadosParceladas = [];
+    let dadosRecorrentes = [];
     let chartFixasInstancia = null;
     let chartCompInstancia = null;
 
@@ -237,7 +261,7 @@
     const mesAtualStr = hoje.toISOString().slice(0, 7);
     document.getElementById('mes-filtro-fixas').value = mesAtualStr;
 
-    // Carregar Membros e popular login
+    // Carregar Membros
     db.ref('familia/membros').on('value', (snapshot) => {
       const data = snapshot.val();
       membros = [];
@@ -267,6 +291,15 @@
 
       usuarioLogado = membro;
       document.getElementById('usuario-logado-nome').innerText = membro.nome;
+      
+      // Exibir foto do membro logado no topo
+      const containerFoto = document.getElementById('cabecalho-foto-container');
+      if (membro.foto) {
+        containerFoto.innerHTML = `<img src="${membro.foto}" class="w-full h-full object-cover">`;
+      } else {
+        containerFoto.innerHTML = `<span id="cabecalho-iniciais">${membro.nome.charAt(0).toUpperCase()}</span>`;
+      }
+
       document.getElementById('tela-login').classList.add('hidden');
       document.getElementById('app-conteudo').classList.remove('hidden');
       inicializarDadosApp();
@@ -343,13 +376,15 @@
         const data = snap.val();
         if (data) Object.keys(data).forEach(k => dadosFixas.push({ id: k, ...data[k] }));
         carregarContasFixas();
+        verificarLembretesVencimento();
       });
 
-      db.ref('familia/parceladas').on('value', snap => {
-        dadosParceladas = [];
+      db.ref('familia/recorrentes').on('value', snap => {
+        dadosRecorrentes = [];
         const data = snap.val();
-        if (data) Object.keys(data).forEach(k => dadosParceladas.push({ id: k, ...data[k] }));
-        carregarContasParceladas();
+        if (data) Object.keys(data).forEach(k => dadosRecorrentes.push({ id: k, ...data[k] }));
+        carregarContasRecorrentes();
+        verificarLembretesVencimento();
       });
     }
 
@@ -363,6 +398,7 @@
         const valor = encontrada ? encontrada.valor : 0;
         const pago = encontrada ? encontrada.pago : false;
         const venc = encontrada ? encontrada.vencimento : `${mesRef}-10`;
+        const dataPgto = encontrada ? (encontrada.dataPgto || '') : '';
 
         containerPadrao.innerHTML += `
           <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
@@ -372,9 +408,10 @@
             </div>
             <div class="text-lg font-bold text-white">R$ ${valor.toFixed(2)}</div>
             <div class="text-xs text-slate-400">Vencimento: ${venc.split('-').reverse().join('/')}</div>
+            ${dataPgto ? `<div class="text-[11px] text-emerald-400">Pago em: ${dataPgto.split('-').reverse().join('/')}</div>` : ''}
             <div class="flex gap-2 pt-1">
               <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-xs py-1.5 rounded text-white">${pago ? 'Marcar Pendente' : 'Pagar'}</button>
-              <button onclick="editarValorFixaPadrao('${nome}', ${valor}, '${venc}')" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-xs text-white"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="editarFixaPadraoCompleta('${nome}', ${valor}, '${venc}')" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-xs text-white" title="Editar Valor e Vencimento"><i class="fa-solid fa-pen"></i></button>
             </div>
           </div>
         `;
@@ -393,9 +430,12 @@
               <td class="p-3 text-white font-medium">${c.titulo}</td>
               <td class="p-3 text-slate-300">${c.vencimento.split('-').reverse().join('/')}</td>
               <td class="p-3 text-slate-200">R$ ${c.valor.toFixed(2)}</td>
-              <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span></td>
+              <td class="p-3">
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span>
+                ${c.dataPgto ? `<div class="text-[10px] text-slate-400 mt-1">Data: ${c.dataPgto.split('-').reverse().join('/')}</div>` : ''}
+              </td>
               <td class="p-3 text-right space-x-1">
-                <button onclick="alternarStatusId('${c.id}', ${c.pago})" class="bg-slate-700 px-2 py-1 rounded text-xs"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
+                <button onclick="alternarStatusId('${c.id}', ${c.pago})" class="bg-slate-700 px-2 py-1 rounded text-xs" title="Mudar Status"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
                 <button onclick="excluirFixa('${c.id}')" class="bg-red-950 text-red-400 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
               </td>
             </tr>
@@ -404,26 +444,31 @@
       }
     }
 
-    function editarValorFixaPadrao(nome, valAtual, vencAtual) {
+    function editarFixaPadraoCompleta(nome, valAtual, vencAtual) {
       const novoVal = prompt(`Atualizar valor para ${nome}:`, valAtual);
-      if (novoVal !== null) {
-        const mesRef = document.getElementById('mes-filtro-fixas').value;
-        const encontrada = dadosFixas.find(c => c.mesRef === mesRef && c.titulo === nome);
-        if (encontrada) {
-          db.ref('familia/fixas/' + encontrada.id).update({ valor: parseFloat(novoVal) || 0 });
-        } else {
-          db.ref('familia/fixas').push({ titulo: nome, valor: parseFloat(novoVal) || 0, mesRef, vencimento: vencAtual, pago: false });
-        }
+      if (novoVal === null) return;
+      const novoVenc = prompt(`Atualizar data de vencimento (AAAA-MM-DD):`, vencAtual);
+      if (novoVenc === null) return;
+
+      const mesRef = document.getElementById('mes-filtro-fixas').value;
+      const encontrada = dadosFixas.find(c => c.mesRef === mesRef && c.titulo === nome);
+      if (encontrada) {
+        db.ref('familia/fixas/' + encontrada.id).update({ valor: parseFloat(novoVal) || 0, vencimento: novoVenc });
+      } else {
+        db.ref('familia/fixas').push({ titulo: nome, valor: parseFloat(novoVal) || 0, mesRef, vencimento: novoVenc, pago: false, dataPgto: '' });
       }
     }
 
     function alternarStatusFixaPadrao(nome, statusAtual, val, venc) {
       const mesRef = document.getElementById('mes-filtro-fixas').value;
       const encontrada = dadosFixas.find(c => c.mesRef === mesRef && c.titulo === nome);
+      const novoStatus = !statusAtual;
+      const dataPgtoStr = novoStatus ? new Date().toISOString().slice(0, 10) : '';
+
       if (encontrada) {
-        db.ref('familia/fixas/' + encontrada.id).update({ pago: !statusAtual });
+        db.ref('familia/fixas/' + encontrada.id).update({ pago: novoStatus, dataPgto: dataPgtoStr });
       } else {
-        db.ref('familia/fixas').push({ titulo: nome, valor: val, mesRef, vencimento: venc, pago: true });
+        db.ref('familia/fixas').push({ titulo: nome, valor: val, mesRef, vencimento: venc, pago: novoStatus, dataPgto: dataPgtoStr });
       }
     }
 
@@ -436,75 +481,107 @@
       const vencimento = document.getElementById('fixa-vencimento').value;
       const mesRef = document.getElementById('mes-filtro-fixas').value;
       if (!titulo || isNaN(valor) || !vencimento) { alert('Preencha todos os campos.'); return; }
-      db.ref('familia/fixas').push({ titulo, valor, vencimento, mesRef, pago: false }).then(() => {
+      db.ref('familia/fixas').push({ titulo, valor, vencimento, mesRef, pago: false, dataPgto: '' }).then(() => {
         fecharModalFixa();
         document.getElementById('fixa-titulo').value = '';
         document.getElementById('fixa-valor').value = '';
       });
     }
 
-    function alternarStatusId(id, pago) { db.ref('familia/fixas/' + id).update({ pago: !pago }); }
+    function alternarStatusId(id, pago) {
+      const novoStatus = !pago;
+      const dataPgtoStr = novoStatus ? new Date().toISOString().slice(0, 10) : '';
+      db.ref('familia/fixas/' + id).update({ pago: novoStatus, dataPgto: dataPgtoStr });
+    }
     function excluirFixa(id) { db.ref('familia/fixas/' + id).remove(); }
 
-    function abrirModalParcelada() { document.getElementById('modal-parcelada').classList.remove('hidden'); }
-    function fecharModalParcelada() { document.getElementById('modal-parcelada').classList.add('hidden'); }
+    // CONTAS RECORRENTES
+    function abrirModalRecorrente() { document.getElementById('modal-recorrente').classList.remove('hidden'); }
+    function fecharModalRecorrente() { document.getElementById('modal-recorrente').classList.add('hidden'); }
 
-    function salvarContaParcelada() {
-      const titulo = document.getElementById('parc-titulo').value;
-      const total = parseFloat(document.getElementById('parc-valor-total').value);
-      const qtd = parseInt(document.getElementById('parc-qtd').value);
-      const dataBase = document.getElementById('parc-vencimento').value;
-
-      if (!titulo || isNaN(total) || isNaN(qtd) || !dataBase) { alert('Preencha os campos corretamente.'); return; }
-
-      const valorParcela = total / qtd;
-      let [ano, mes, dia] = dataBase.split('-').map(Number);
-
-      for (let i = 1; i <= qtd; i++) {
-        let mesStr = String(mes).padStart(2, '0');
-        let anoStr = String(ano);
-        let mesRef = `${anoStr}-${mesStr}`;
-        let vencimento = `${mesRef}-${String(dia).padStart(2, '0')}`;
-
-        db.ref('familia/parceladas').push({
-          titulo: `${titulo} (${i}/${qtd})`,
-          valor: valorParcela,
-          vencimento: vencimento,
-          mesRef: mesRef,
-          pago: false
-        });
-
-        mes++;
-        if (mes > 12) { mes = 1; ano++; }
-      }
-      fecharModalParcelada();
-      alert('Parcelas geradas e distribuídas com sucesso!');
+    function alternarCamposParcelamento() {
+      const modo = document.getElementById('rec-modo').value;
+      const blocoQtd = document.getElementById('bloco-qtd-parcelas');
+      if (modo === 'parcelado') blocoQtd.classList.remove('hidden');
+      else blocoQtd.classList.add('hidden');
     }
 
-    function carregarContasParceladas() {
-      const tbody = document.getElementById('tabela-parceladas');
+    function salvarContaRecorrente() {
+      const titulo = document.getElementById('rec-titulo').value;
+      const valorTotal = parseFloat(document.getElementById('rec-valor').value);
+      const dataBase = document.getElementById('rec-vencimento').value;
+      const modo = document.getElementById('rec-modo').value;
+
+      if (!titulo || isNaN(valorTotal) || !dataBase) { alert('Preencha os campos corretamente.'); return; }
+
+      let [ano, mes, dia] = dataBase.split('-').map(Number);
+
+      if (modo === 'vista') {
+        let mesRef = `${ano}-${String(mes).padStart(2, '0')}`;
+        db.ref('familia/recorrentes').push({
+          titulo,
+          valor: valorTotal,
+          vencimento: dataBase,
+          mesRef: mesRef,
+          pago: false,
+          modo: 'À vista'
+        });
+      } else {
+        const qtd = parseInt(document.getElementById('rec-qtd').value) || 1;
+        const valorParcela = valorTotal / qtd;
+
+        for (let i = 1; i <= qtd; i++) {
+          let mesStr = String(mes).padStart(2, '0');
+          let anoStr = String(ano);
+          let mesRef = `${anoStr}-${mesStr}`;
+          let vencimento = `${mesRef}-${String(dia).padStart(2, '0')}`;
+
+          db.ref('familia/recorrentes').push({
+            titulo: `${titulo} (${i}/${qtd})`,
+            valor: valorParcela,
+            vencimento: vencimento,
+            mesRef: mesRef,
+            pago: false,
+            modo: `Parcela ${i}/${qtd}`
+          });
+
+          mes++;
+          if (mes > 12) { mes = 1; ano++; }
+        }
+      }
+
+      fecharModalRecorrente();
+      alert('Conta recorrente cadastrada com sucesso!');
+    }
+
+    function carregarContasRecorrentes() {
+      const tbody = document.getElementById('tabela-recorrentes');
       tbody.innerHTML = '';
-      if (dadosParceladas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Nenhuma conta parcelada cadastrada.</td></tr>`;
+      if (dadosRecorrentes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Nenhuma conta recorrente cadastrada.</td></tr>`;
         return;
       }
-      dadosParceladas.forEach(c => {
+      dadosRecorrentes.forEach(c => {
         tbody.innerHTML += `
           <tr class="border-b border-slate-700/50">
             <td class="p-3 text-white font-medium">${c.titulo}</td>
             <td class="p-3 text-slate-300">${c.mesRef}</td>
             <td class="p-3 text-slate-200">R$ ${c.valor.toFixed(2)}</td>
             <td class="p-3 text-slate-300">${c.vencimento.split('-').reverse().join('/')}</td>
-            <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span></td>
+            <td class="p-3">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span>
+              <div class="text-[10px] text-slate-400 mt-1">${c.modo || 'Recorrente'}</div>
+            </td>
             <td class="p-3 text-right space-x-1">
-              <button onclick="db.ref('familia/parceladas/${c.id}').update({pago: ${!c.pago}})" class="bg-slate-700 px-2 py-1 rounded text-xs"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
-              <button onclick="db.ref('familia/parceladas/${c.id}').remove()" class="bg-red-950 text-red-400 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="db.ref('familia/recorrentes/${c.id}').update({pago: ${!c.pago}})" class="bg-slate-700 px-2 py-1 rounded text-xs" title="Mudar Status"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
+              <button onclick="db.ref('familia/recorrentes/${c.id}').remove()" class="bg-red-950 text-red-400 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
             </td>
           </tr>
         `;
       });
     }
 
+    // DASHBOARD & GRÁFICOS
     function atualizarGraficos() {
       const ctx1 = document.getElementById('graficoFixas').getContext('2d');
       const meses = [...new Set(dadosFixas.map(c => c.mesRef))].sort();
@@ -532,27 +609,62 @@
       });
     }
 
+    // LEMBRETES DE 6 E 3 DIAS ANTES DO VENCIMENTO
     function solicitarPermissaoNotificacao() {
       if (!("Notification" in window)) {
-        alert("Este navegador não suporta notificações de desktop/celular.");
+        alert("Este navegador não suporta notificações.");
         return;
       }
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-          alert("Notificações ativadas com sucesso!");
-          new Notification("FinanceSmart", { body: "Seus alertas de vencimento estão ativos!" });
+          alert("Notificações ativadas! Você receberá alertas 6 e 3 dias antes dos vencimentos.");
         }
       });
     }
 
-    function compartilharResumo() {
-      const texto = `Resumo Financeiro Familiar - Aceda ao FinanceSmart para conferir as contas do mês!`;
-      if (navigator.share) {
-        navigator.share({ title: 'FinanceSmart', text: texto, url: window.location.href });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert('Link copiado para a área de transferência!');
-      }
+    function verificarLembretesVencimento() {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+      const hojeData = new Date();
+      hojeData.setHours(0,0,0,0);
+
+      const todasContas = [...dadosFixas, ...dadosRecorrentes].filter(c => !c.pago);
+
+      todasContas.forEach(c => {
+        if (!c.vencimento) return;
+        const [ano, mes, dia] = c.vencimento.split('-').map(Number);
+        const dataVenc = new Date(ano, mes - 1, dia);
+        dataVenc.setHours(0,0,0,0);
+
+        const diffTempo = dataVenc - hojeData;
+        const diffDias = Math.round(diffTempo / (1000 * 60 * 60 * 24));
+
+        if (diffDias === 6 || diffDias === 3) {
+          const chaveNotifEnviada = `notif_${c.id}_${diffDias}d`;
+          if (!localStorage.getItem(chaveNotifEnviada)) {
+            new Notification(`Lembrete FinanceSmart`, {
+              body: `A conta "${c.titulo}" vence em ${diffDias} dias (Valor: R$ ${c.valor.toFixed(2)})!`
+            });
+            localStorage.setItem(chaveNotifEnviada, 'true');
+          }
+        }
+      });
+    }
+
+    // EXPORTAR / COMPARTILHAR EM PDF
+    function exportarPDF() {
+      const elemento = document.getElementById('conteudo-pdf');
+      const opcoes = {
+        margin: 10,
+        filename: 'Resumo-FinanceSmart.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().from(elemento).set(opcoes).save().then(() => {
+        alert('PDF gerado e baixado com sucesso!');
+      });
     }
   </script>
 </body>
