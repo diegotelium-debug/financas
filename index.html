@@ -31,7 +31,7 @@
         <div>
           <label class="block text-xs text-slate-400 mb-1">Membro da Família</label>
           <select id="login-membro" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-xl text-white text-xs focus:outline-none focus:border-purple-500 transition-all">
-            <option value="">Selecione...</option>
+            <option value="">Carregando membros...</option>
           </select>
         </div>
         <div>
@@ -178,7 +178,7 @@
     </div>
   </div>
 
-    <div id="modal-fixa" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+  <div id="modal-fixa" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
     <div class="bg-slate-800 border border-slate-700 w-full max-w-xs rounded-2xl p-5 space-y-3.5 shadow-2xl">
       <h3 class="font-bold text-white text-sm">Adicionar Conta Fixa Extra</h3>
       <div class="space-y-2.5">
@@ -259,6 +259,8 @@
           membros.push({ id: key, ...data[key] });
           selectLogin.innerHTML += `<option value="${data[key].nome}">${data[key].nome}</option>`;
         });
+      } else {
+        selectLogin.innerHTML = '<option value="">Nenhum membro cadastrado</option>';
       }
       renderizarMembrosCadastrados();
     });
@@ -317,7 +319,6 @@
       };
       reader.readAsDataURL(file);
     }
-
     function salvarMembro() {
       const nome = document.getElementById('membro-nome').value.trim();
       const senha = document.getElementById('membro-senha').value;
@@ -717,4 +718,3 @@
   </script>
 </body>
 </html>
-
