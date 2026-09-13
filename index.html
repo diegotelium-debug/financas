@@ -179,7 +179,7 @@
           
           <div id="preview-foto-container" class="hidden flex items-center gap-2 pt-1">
             <img id="preview-foto" class="w-8 h-8 rounded-full object-cover border border-purple-400">
-            <span class="text-xs text-emerald-400">Foto carregada com sucesso!</span>
+            <span class="text-xs text-emerald-400">Foto selecionada!</span>
           </div>
 
           <button id="btn-salvar-membro" onclick="adicionarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-sm font-medium mt-1 transition-all">Salvar Membro</button>
@@ -192,7 +192,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
     // Configuração oficial Firebase
     const firebaseConfig = {
       apiKey: "AiZaSyCT7UJkbCfwq64K3_s3chD",
@@ -258,7 +258,6 @@
       }
     });
 
-    // Processamento e compactação da imagem para salvar rápido no banco
     function processarFotoGaleria(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -268,7 +267,7 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          const maxDim = 100; // Redimensiona imagem perfeitamente para avatar
+          const maxDim = 80;
           let width = img.width;
           let height = img.height;
 
@@ -289,7 +288,7 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.4);
           document.getElementById('novo-membro-foto-base64').value = dataUrl;
           document.getElementById('preview-foto').src = dataUrl;
           document.getElementById('preview-foto-container').classList.remove('hidden');
@@ -308,7 +307,6 @@
       document.getElementById('modal-membros').classList.add('hidden');
     }
 
-    // Função de Salvar Membro com tratamento correto de promessas
     function adicionarMembro() {
       const nomeInput = document.getElementById('novo-membro-nome');
       const fotoBase64 = document.getElementById('novo-membro-foto-base64').value;
@@ -323,21 +321,38 @@
       btn.innerText = "Salvando...";
       btn.disabled = true;
 
-      const novoRef = db.ref('familia/membros').push();
-      novoRef.set({
+      let finalizado = false;
+
+      const timerError = setTimeout(() => {
+        if (!finalizado) {
+          finalizado = true;
+          btn.innerText = "Salvar Membro";
+          btn.disabled = false;
+          alert("O Firebase não respondeu! Verifique se publicou a regra '.write': true.");
+        }
+      }, 4000);
+
+      db.ref('familia/membros').push({
         nome: nome,
         foto: fotoBase64 || ''
-      }, function(error) {
-        btn.innerText = "Salvar Membro";
-        btn.disabled = false;
-        
-        if (error) {
-          alert("Não foi possível salvar: " + error.message);
-        } else {
+      }).then(() => {
+        if (!finalizado) {
+          finalizado = true;
+          clearTimeout(timerError);
           nomeInput.value = '';
           document.getElementById('novo-membro-foto-base64').value = '';
           document.getElementById('novo-membro-arquivo').value = '';
           document.getElementById('preview-foto-container').classList.add('hidden');
+          btn.innerText = "Salvar Membro";
+          btn.disabled = false;
+        }
+      }).catch((err) => {
+        if (!finalizado) {
+          finalizado = true;
+          clearTimeout(timerError);
+          btn.innerText = "Salvar Membro";
+          btn.disabled = false;
+          alert("Erro ao salvar: " + err.message);
         }
       });
     }
