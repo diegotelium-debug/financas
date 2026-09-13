@@ -17,32 +17,32 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-10">
 
   <!-- TELA DE LOGIN -->
   <div id="tela-login" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-5 space-y-3 shadow-2xl text-center">
-      <div class="w-10 h-10 bg-purple-600/20 border border-purple-500/40 rounded-full flex items-center justify-center mx-auto mb-1">
-        <i class="fa-solid fa-wallet text-purple-400 text-base"></i>
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-xl p-5 space-y-3 shadow-2xl text-center">
+      <div class="w-9 h-9 bg-purple-600/20 border border-purple-500/40 rounded-full flex items-center justify-center mx-auto mb-1">
+        <i class="fa-solid fa-wallet text-purple-400 text-sm"></i>
       </div>
-      <h2 class="text-base font-bold text-white">FinanceSmart</h2>
-      <p class="text-[11px] text-slate-400">Selecione seu perfil e digite sua senha de acesso</p>
+      <h2 class="text-sm font-bold text-white">FinanceSmart</h2>
+      <p class="text-[11px] text-slate-400">Selecione seu perfil e informe sua senha</p>
       
       <div class="space-y-2.5 text-left pt-1">
         <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Membro da Família</label>
-          <select id="login-membro" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500 transition-all">
-            <option value="">Carregando membros...</option>
+          <label class="block text-[10px] text-slate-400 mb-1">Membro</label>
+          <select id="login-membro" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500">
+            <option value="">Carregando...</option>
           </select>
         </div>
         <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Senha</label>
-          <input type="password" id="login-senha" placeholder="Sua senha" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500 transition-all">
+          <label class="block text-[10px] text-slate-400 mb-1">Senha</label>
+          <input type="password" id="login-senha" placeholder="Senha" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500">
         </div>
-        <button onclick="realizarLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold transition-all shadow-lg shadow-purple-600/20">Entrar no App</button>
+        <button onclick="realizarLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow-lg shadow-purple-600/20 transition-all">Entrar</button>
         
-        <div id="aviso-sem-membros" class="hidden pt-2 border-t border-slate-700 text-center">
-          <p class="text-[11px] text-amber-400 mb-2">Nenhum membro encontrado no banco.</p>
+        <div id="aviso-sem-membros" class="hidden pt-2 border-t border-slate-800 text-center">
+          <p class="text-[10px] text-amber-400 mb-2">Nenhum membro encontrado.</p>
           <button onclick="cadastrarMembroInicial()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-1.5 rounded-lg text-xs font-semibold">Cadastrar Administrador</button>
         </div>
       </div>
@@ -50,54 +50,52 @@
   </div>
 
   <!-- APLICATIVO PRINCIPAL -->
-  <div id="app-conteudo" class="p-3 max-w-6xl mx-auto space-y-4 hidden">
-    <header class="bg-slate-800 p-3 rounded-xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row justify-between items-center gap-2.5">
-      <div class="flex items-center gap-2.5">
-        <div id="cabecalho-foto-container" class="w-9 h-9 rounded-full bg-purple-600 border-2 border-purple-400 flex items-center justify-center overflow-hidden font-bold text-xs shadow-md shrink-0">
+  <div id="app-conteudo" class="p-3 max-w-5xl mx-auto space-y-3.5 hidden">
+    <header class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 shadow-lg flex flex-col sm:flex-row justify-between items-center gap-2">
+      <div class="flex items-center gap-2">
+        <div id="cabecalho-foto-container" class="w-8 h-8 rounded-full bg-purple-600 border border-purple-400 flex items-center justify-center overflow-hidden font-bold text-xs shrink-0">
           <span id="cabecalho-iniciais">U</span>
         </div>
         <div>
-          <h1 class="text-sm font-bold text-white">FinanceSmart</h1>
-          <p class="text-[10px] text-slate-400">Logado: <span id="usuario-logado-nome" class="text-purple-400 font-semibold"></span></p>
+          <h1 class="text-xs font-bold text-white tracking-tight">FinanceSmart</h1>
+          <p class="text-[10px] text-slate-400">Usuário: <span id="usuario-logado-nome" class="text-purple-400 font-semibold"></span></p>
         </div>
       </div>
 
-      <div class="flex flex-wrap gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 text-xs">
+      <div class="flex flex-wrap gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
         <button onclick="mudarAba('fixas')" id="btn-aba-fixas" class="px-2.5 py-1 rounded-md font-medium transition-all bg-emerald-600 text-white shadow">Fixas</button>
-        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-300 hover:text-white">Recorrentes</button>
-        <button onclick="mudarAba('dashboard')" id="btn-aba-dashboard" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-300 hover:text-white">Dashboard</button>
-        <button onclick="mudarAba('membros')" id="btn-aba-membros" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-300 hover:text-white">Membros</button>
+        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-400 hover:text-white">Recorrentes</button>
+        <button onclick="mudarAba('dashboard')" id="btn-aba-dashboard" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-400 hover:text-white">Dashboard</button>
+        <button onclick="mudarAba('membros')" id="btn-aba-membros" class="px-2.5 py-1 rounded-md font-medium transition-all text-slate-400 hover:text-white">Membros</button>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button onclick="exportarPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all shadow-lg shadow-blue-600/20"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-      </div>
+      <button onclick="exportarPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow"><i class="fa-solid fa-file-pdf"></i> PDF</button>
     </header>
 
-    <div id="conteudo-pdf" class="space-y-4">
+    <div id="conteudo-pdf" class="space-y-3.5">
       <!-- ABA FIXAS -->
       <div id="aba-fixas" class="space-y-3">
-        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700/80 gap-2.5">
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-slate-800 gap-2">
           <div class="flex items-center gap-2 w-full sm:w-auto">
-            <span class="text-[11px] font-medium text-slate-400">Mês de Referência:</span>
-            <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-900 border border-slate-700 p-1.5 rounded-lg text-white text-xs focus:outline-none focus:border-emerald-500">
+            <span class="text-[11px] text-slate-400">Mês:</span>
+            <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-950 border border-slate-800 p-1.5 rounded-lg text-white text-xs focus:outline-none focus:border-emerald-500">
           </div>
-          <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 w-full sm:w-auto justify-center shadow-lg shadow-emerald-600/20"><i class="fa-solid fa-plus"></i> Nova Conta Fixa Extra</button>
+          <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 w-full sm:w-auto justify-center shadow"><i class="fa-solid fa-plus"></i> Nova Conta Fixa</button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5" id="cards-fixas-padrao"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2" id="cards-fixas-padrao"></div>
 
-        <div class="bg-slate-800 rounded-xl border border-slate-700/80 overflow-hidden shadow-xl">
-          <div class="p-3 border-b border-slate-700 font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-list-check text-emerald-400"></i> Outras Contas Fixas do Mês</div>
+        <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
+          <div class="p-2.5 border-b border-slate-800 font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-list-check text-emerald-400"></i> Outras Contas Fixas Extras</div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
-                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-700 text-[10px]">
-                  <th class="p-2.5">Título</th>
-                  <th class="p-2.5">Vencimento</th>
-                  <th class="p-2.5">Valor</th>
-                  <th class="p-2.5">Status</th>
-                  <th class="p-2.5 text-right">Ações</th>
+                <tr class="bg-slate-950/60 text-slate-400 border-b border-slate-800 text-[10px]">
+                  <th class="p-2">Título</th>
+                  <th class="p-2">Vencimento</th>
+                  <th class="p-2">Valor</th>
+                  <th class="p-2">Status</th>
+                  <th class="p-2 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody id="tabela-fixas-extras">
@@ -110,29 +108,29 @@
 
       <!-- ABA RECORRENTES -->
       <div id="aba-recorrentes" class="space-y-3 hidden">
-        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700/80 gap-2.5">
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-900 p-2.5 rounded-xl border border-slate-800 gap-2">
           <div class="flex items-center gap-2 w-full sm:w-auto">
-            <span class="text-[11px] font-medium text-slate-400">Mês Recorrente:</span>
-            <input type="month" id="mes-filtro-recorrentes" onchange="carregarContasRecorrentes()" class="bg-slate-900 border border-slate-700 p-1.5 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500">
+            <span class="text-[11px] text-slate-400">Mês:</span>
+            <input type="month" id="mes-filtro-recorrentes" onchange="carregarContasRecorrentes()" class="bg-slate-950 border border-slate-800 p-1.5 rounded-lg text-white text-xs focus:outline-none">
           </div>
-          <button onclick="abrirModalRecorrente()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 w-full sm:w-auto justify-center shadow-lg shadow-purple-600/20"><i class="fa-solid fa-plus"></i> Nova Conta Recorrente</button>
+          <button onclick="abrirModalRecorrente()" class="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 w-full sm:w-auto justify-center shadow"><i class="fa-solid fa-plus"></i> Nova Conta Recorrente</button>
         </div>
 
-        <div class="bg-slate-800 rounded-xl border border-slate-700/80 overflow-hidden shadow-xl">
-          <div class="p-3 border-b border-slate-700 font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-credit-card text-purple-400"></i> Contas e Parcelamentos do Mês</div>
+        <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
+          <div class="p-2.5 border-b border-slate-800 font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-credit-card text-purple-400"></i> Contas Parceladas e Recorrentes</div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
-                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-700 text-[10px]">
-                  <th class="p-2.5">Título</th>
-                  <th class="p-2.5">Valor</th>
-                  <th class="p-2.5">Vencimento</th>
-                  <th class="p-2.5">Status</th>
-                  <th class="p-2.5 text-right">Ações</th>
+                <tr class="bg-slate-950/60 text-slate-400 border-b border-slate-800 text-[10px]">
+                  <th class="p-2">Título</th>
+                  <th class="p-2">Valor</th>
+                  <th class="p-2">Vencimento</th>
+                  <th class="p-2">Status</th>
+                  <th class="p-2 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody id="tabela-recorrentes">
-                <tr><td colspan="5" class="p-3 text-center text-slate-500 text-xs">Nenhuma conta recorrente neste mês.</td></tr>
+                <tr><td colspan="5" class="p-3 text-center text-slate-500 text-xs">Nenhuma conta recorrente.</td></tr>
               </tbody>
             </table>
           </div>
@@ -142,16 +140,22 @@
       <!-- ABA DASHBOARD -->
       <div id="aba-dashboard" class="space-y-3 hidden">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/80 shadow-xl space-y-2">
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 shadow space-y-2">
             <div class="flex justify-between items-center">
-              <h3 class="font-bold text-white text-xs">Valor Total das Contas Mês a Mês</h3>
+              <h3 class="font-bold text-white text-xs">Total de Contas (Mês a Mês)</h3>
               <span id="dash-total-geral" class="text-xs font-semibold text-emerald-400">R$ 0,00</span>
             </div>
-            <div class="relative h-52"><canvas id="graficoTotaisMes"></canvas></div>
+            <div class="relative h-48"><canvas id="graficoTotaisMes"></canvas></div>
           </div>
-          <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/80 shadow-xl space-y-2">
-            <h3 class="font-bold text-white text-xs">Comparativo por Título Mês a Mês</h3>
-            <div class="relative h-52"><canvas id="graficoComparativoTitulos"></canvas></div>
+          
+          <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 shadow space-y-2">
+            <div class="flex justify-between items-center">
+              <h3 class="font-bold text-white text-xs">Evolução Mensal por Título (Ex: Enel)</h3>
+              <select id="filtro-titulo-comparativo" onchange="atualizarGraficoComparativo()" class="bg-slate-950 border border-slate-800 text-[10px] text-white p-1 rounded-lg focus:outline-none">
+                <option value="">Selecione o Título</option>
+              </select>
+            </div>
+            <div class="relative h-48"><canvas id="graficoComparativoTitulos"></canvas></div>
           </div>
         </div>
       </div>
@@ -159,55 +163,57 @@
 
     <!-- ABA MEMBROS -->
     <div id="aba-membros" class="space-y-3 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700/80 space-y-2.5 h-fit shadow-xl">
-          <h3 class="font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-user-plus text-purple-400"></i> Cadastrar Novo Membro</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2 h-fit shadow">
+          <h3 class="font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-user-plus text-purple-400"></i> Novo Membro</h3>
           <div>
             <label class="block text-[10px] text-slate-400 mb-1">Nome</label>
-            <input type="text" id="membro-nome" placeholder="Nome do membro..." class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500">
+            <input type="text" id="membro-nome" placeholder="Nome" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs focus:outline-none">
           </div>
           <div>
-            <label class="block text-[10px] text-slate-400 mb-1">Senha de Acesso</label>
-            <input type="password" id="membro-senha" placeholder="Senha" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500">
+            <label class="block text-[10px] text-slate-400 mb-1">Senha</label>
+            <input type="password" id="membro-senha" placeholder="Senha" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs focus:outline-none">
           </div>
           <div>
-            <label class="block text-[10px] text-slate-400 mb-1">Foto de Perfil (Galeria):</label>
+            <label class="block text-[10px] text-slate-400 mb-1">Foto (Galeria)</label>
             <input type="file" id="membro-arquivo" accept="image/*" onchange="converterFotoMembro(event)" class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white file:font-semibold">
             <input type="hidden" id="membro-foto-base64">
           </div>
           <button onclick="salvarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold transition-all">Salvar Membro</button>
         </div>
 
-        <div class="md:col-span-2 bg-slate-800 p-3.5 rounded-xl border border-slate-700/80 space-y-2.5 shadow-xl">
+        <div class="md:col-span-2 bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2 shadow">
           <h3 class="font-bold text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-users text-purple-400"></i> Membros Cadastrados</h3>
-          <div id="lista-membros-cadastrados" class="space-y-2"></div>
+          <div id="lista-membros-cadastrados" class="space-y-1.5"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAIS -->
-  <div id="modal-fixa" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-xs rounded-xl p-4 space-y-3 shadow-2xl">
-      <h3 class="font-bold text-white text-xs">Adicionar Conta Fixa Extra</h3>
-      <input type="text" id="fixa-titulo" placeholder="Título..." class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
-      <input type="number" step="0.01" id="fixa-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
-      <input type="date" id="fixa-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
-      <div class="flex justify-end gap-1.5">
-        <button onclick="fecharModalFixa()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded-lg text-xs">Cancelar</button>
+  <!-- MODAL FIXA -->
+  <div id="modal-fixa" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 hidden z-50">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-xs rounded-xl p-4 space-y-3 shadow-2xl">
+      <h3 id="modal-fixa-titulo" class="font-bold text-white text-xs">Nova Conta Fixa Extra</h3>
+      <input type="hidden" id="fixa-id-editando">
+      <input type="text" id="fixa-titulo" placeholder="Título (ex: Internet)" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs">
+      <input type="number" step="0.01" id="fixa-valor" placeholder="Valor R$" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs">
+      <input type="date" id="fixa-vencimento" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs">
+      <div class="flex justify-end gap-1.5 pt-1">
+        <button onclick="fecharModalFixa()" class="bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-xs">Cancelar</button>
         <button onclick="salvarContaFixa()" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs">Salvar</button>
       </div>
     </div>
   </div>
 
-  <div id="modal-recorrente" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-xs rounded-xl p-4 space-y-3 shadow-2xl">
+  <!-- MODAL RECORRENTE -->
+  <div id="modal-recorrente" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 hidden z-50">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-xs rounded-xl p-4 space-y-3 shadow-2xl">
       <h3 class="font-bold text-white text-xs">Nova Conta Recorrente</h3>
-      <input type="text" id="rec-titulo" placeholder="Título" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
-      <input type="number" step="0.01" id="rec-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
-      <input type="date" id="rec-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-xs">
-      <div class="flex justify-end gap-1.5">
-        <button onclick="fecharModalRecorrente()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded-lg text-xs">Cancelar</button>
+      <input type="text" id="rec-titulo" placeholder="Título" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs">
+      <input type="number" step="0.01" id="rec-valor" placeholder="Valor R$" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs">
+      <input type="date" id="rec-vencimento" class="w-full bg-slate-950 border border-slate-800 p-2 rounded-lg text-white text-xs">
+      <div class="flex justify-end gap-1.5 pt-1">
+        <button onclick="fecharModalRecorrente()" class="bg-slate-800 text-white px-2.5 py-1.5 rounded-lg text-xs">Cancelar</button>
         <button onclick="salvarContaRecorrente()" class="bg-purple-600 text-white px-2.5 py-1.5 rounded-lg text-xs">Salvar</button>
       </div>
     </div>
@@ -232,7 +238,7 @@
     let dadosFixas = [];
     let dadosRecorrentes = [];
     let chartTotaisInstancia = null;
-    let chartCompTitulosInstancia = null;
+    let chartCompInstancia = null;
 
     const hoje = new Date();
     const mesAtualStr = hoje.toISOString().slice(0, 7);
@@ -244,9 +250,7 @@
       membros = [];
       const selectLogin = document.getElementById('login-membro');
       const avisoMembros = document.getElementById('aviso-sem-membros');
-      
       selectLogin.innerHTML = '<option value="">Selecione...</option>';
-      
       if (data) {
         Object.keys(data).forEach(key => {
           membros.push({ id: key, ...data[key] });
@@ -254,26 +258,17 @@
         });
         avisoMembros.classList.add('hidden');
       } else {
-        selectLogin.innerHTML = '<option value="">Nenhum membro cadastrado</option>';
+        selectLogin.innerHTML = '<option value="">Nenhum membro</option>';
         avisoMembros.classList.remove('hidden');
       }
       renderizarMembrosCadastrados();
-    }, (error) => {
-      console.error(error);
-      document.getElementById('login-membro').innerHTML = '<option value="">Erro ao carregar do Firebase</option>';
-      document.getElementById('aviso-sem-membros').classList.remove('hidden');
     });
 
     function cadastrarMembroInicial() {
-      const nome = prompt("Digite seu nome (Administrador):", "Diego");
+      const nome = prompt("Nome do Administrador:", "Diego");
       if (!nome) return;
-      const senha = prompt("Digite uma senha:", "1234");
-      
-      db.ref('familia/membros').push({ nome, senha: senha || '', foto: '' }).then(() => {
-        alert('Membro criado com sucesso!');
-      }).catch(err => {
-        alert('Erro ao salvar: ' + err.message);
-      });
+      const senha = prompt("Senha:", "1234");
+      db.ref('familia/membros').push({ nome, senha: senha || '', foto: '' }).then(() => alert('Salvo!'));
     }
 
     function converterFotoMembro(event) {
@@ -284,9 +279,9 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          canvas.width = 100; canvas.height = 100;
+          canvas.width = 80; canvas.height = 80;
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, 100, 100);
+          ctx.drawImage(img, 0, 0, 80, 80);
           document.getElementById('membro-foto-base64').value = canvas.toDataURL('image/jpeg', 0.7);
         };
         img.src = e.target.result;
@@ -297,18 +292,12 @@
     function realizarLogin() {
       const nomeSel = document.getElementById('login-membro').value;
       const senhaSel = document.getElementById('login-senha').value;
-
       if (!nomeSel) { alert('Selecione seu nome.'); return; }
       const membro = membros.find(m => m.nome === nomeSel);
-
-      if (membro && membro.senha && membro.senha !== senhaSel) {
-        alert('Senha incorreta!');
-        return;
-      }
+      if (membro && membro.senha && membro.senha !== senhaSel) { alert('Senha incorreta!'); return; }
 
       usuarioLogado = membro || { nome: nomeSel };
       document.getElementById('usuario-logado-nome').innerText = usuarioLogado.nome;
-      
       const containerFoto = document.getElementById('cabecalho-foto-container');
       if (usuarioLogado.foto) {
         containerFoto.innerHTML = `<img src="${usuarioLogado.foto}" class="w-full h-full object-cover">`;
@@ -324,11 +313,11 @@
     function mudarAba(aba) {
       ['fixas', 'recorrentes', 'dashboard', 'membros'].forEach(a => {
         document.getElementById(`aba-${a}`).classList.add('hidden');
-        document.getElementById(`btn-aba-${a}`).className = "px-2.5 py-1 rounded-md font-medium transition-all text-slate-300 hover:text-white";
+        document.getElementById(`btn-aba-${a}`).className = "px-2.5 py-1 rounded-md font-medium transition-all text-slate-400 hover:text-white";
       });
       document.getElementById(`aba-${aba}`).classList.remove('hidden');
       document.getElementById(`btn-aba-${aba}`).className = "px-2.5 py-1 rounded-md font-medium transition-all bg-emerald-600 text-white shadow";
-      if (aba === 'dashboard') atualizarGraficos();
+      if (aba === 'dashboard') { popularSelectTitulosComparativos(); atualizarDashboard(); }
     }
 
     function salvarMembro() {
@@ -336,7 +325,6 @@
       const senha = document.getElementById('membro-senha').value;
       const foto = document.getElementById('membro-foto-base64').value;
       if (!nome) { alert('Digite o nome.'); return; }
-
       db.ref('familia/membros').push({ nome, senha: senha || '', foto: foto || '' }).then(() => {
         document.getElementById('membro-nome').value = '';
         document.getElementById('membro-senha').value = '';
@@ -349,20 +337,17 @@
     function renderizarMembrosCadastrados() {
       const container = document.getElementById('lista-membros-cadastrados');
       container.innerHTML = '';
-      if (membros.length === 0) {
-        container.innerHTML = `<p class="text-slate-500 text-xs">Nenhum membro cadastrado.</p>`;
-        return;
-      }
+      if (membros.length === 0) { container.innerHTML = `<p class="text-slate-500 text-xs">Nenhum membro.</p>`; return; }
       membros.forEach(m => {
         container.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-900/60 p-2 rounded-xl border border-slate-700/60 text-xs">
+          <div class="flex justify-between items-center bg-slate-950 p-2 rounded-lg border border-slate-800 text-xs">
             <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center overflow-hidden font-bold text-white shrink-0 text-xs">
+              <div class="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center overflow-hidden font-bold text-white shrink-0 text-[10px]">
                 ${m.foto ? `<img src="${m.foto}" class="w-full h-full object-cover">` : m.nome.charAt(0)}
               </div>
               <span class="text-white font-medium">${m.nome}</span>
             </div>
-            <button onclick="db.ref('familia/membros/${m.id}').remove()" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="db.ref('familia/membros/${m.id}').remove()" class="text-red-400 hover:text-red-300 px-2 py-0.5"><i class="fa-solid fa-trash"></i></button>
           </div>
         `;
       });
@@ -396,14 +381,38 @@
         const venc = encontrada ? encontrada.vencimento : `${mesRef}-10`;
 
         containerPadrao.innerHTML += `
-          <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/80 space-y-1.5 shadow-sm">
+          <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 space-y-1.5 shadow-sm">
             <div class="flex justify-between items-center">
               <span class="font-bold text-white text-xs">${nome}</span>
               <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${pago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${pago ? 'Quitada' : 'Pendente'}</span>
             </div>
-            <div class="text-sm font-bold text-white">R$ ${valor.toFixed(2)}</div>
-            <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="w-full bg-slate-700 text-[11px] py-1 rounded-lg text-white">${pago ? 'Desfazer' : 'Pagar'}</button>
+            <div class="text-xs font-bold text-white">R$ ${valor.toFixed(2)}</div>
+            <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="w-full bg-slate-800 text-[10px] py-1 rounded-lg text-white">${pago ? 'Desfazer' : 'Pagar'}</button>
           </div>
+        `;
+      });
+
+      const tabelaExtras = document.getElementById('tabela-fixas-extras');
+      tabelaExtras.innerHTML = '';
+      const extras = dadosFixas.filter(c => c.mesRef === mesRef && !contasFixasPadraoNomes.includes(c.titulo));
+      
+      if (extras.length === 0) {
+        tabelaExtras.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-slate-500 text-xs">Nenhuma conta extra cadastrada.</td></tr>`;
+        return;
+      }
+
+      extras.forEach(item => {
+        tabelaExtras.innerHTML += `
+          <tr class="border-b border-slate-800/60 hover:bg-slate-950/40">
+            <td class="p-2 text-white font-medium">${item.titulo}</td>
+            <td class="p-2 text-slate-300">${item.vencimento}</td>
+            <td class="p-2 text-emerald-400 font-semibold">R$ ${item.valor.toFixed(2)}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded text-[9px] font-bold ${item.pago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${item.pago ? 'Pago' : 'Pendente'}</span></td>
+            <td class="p-2 text-right space-x-1">
+              <button onclick="abrirModalEditarFixa('${item.id}', '${item.titulo}', ${item.valor}, '${item.vencimento}')" class="text-blue-400 hover:text-blue-300 px-1"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deletarFixa('${item.id}')" class="text-red-400 hover:text-red-300 px-1"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
         `;
       });
     }
@@ -419,15 +428,45 @@
       }
     }
 
-    function abrirModalFixa() { document.getElementById('modal-fixa').classList.remove('hidden'); }
+    function abrirModalFixa() {
+      document.getElementById('modal-fixa-titulo').innerText = "Nova Conta Fixa Extra";
+      document.getElementById('fixa-id-editando').value = "";
+      document.getElementById('fixa-titulo').value = "";
+      document.getElementById('fixa-valor').value = "";
+      document.getElementById('fixa-vencimento').value = "";
+      document.getElementById('modal-fixa').classList.remove('hidden');
+    }
+
+    function abrirModalEditarFixa(id, titulo, valor, vencimento) {
+      document.getElementById('modal-fixa-titulo').innerText = "Editar Conta Fixa Extra";
+      document.getElementById('fixa-id-editando').value = id;
+      document.getElementById('fixa-titulo').value = titulo;
+      document.getElementById('fixa-valor').value = valor;
+      document.getElementById('fixa-vencimento').value = vencimento;
+      document.getElementById('modal-fixa').classList.remove('hidden');
+    }
+
     function fecharModalFixa() { document.getElementById('modal-fixa').classList.add('hidden'); }
+
     function salvarContaFixa() {
+      const id = document.getElementById('fixa-id-editando').value;
       const titulo = document.getElementById('fixa-titulo').value;
       const valor = parseFloat(document.getElementById('fixa-valor').value);
       const vencimento = document.getElementById('fixa-vencimento').value;
       const mesRef = document.getElementById('mes-filtro-fixas').value;
       if (!titulo || isNaN(valor) || !vencimento) return;
-      db.ref('familia/fixas').push({ titulo, valor, vencimento, mesRef, pago: false }).then(() => fecharModalFixa());
+
+      if (id) {
+        db.ref('familia/fixas/' + id).update({ titulo, valor, vencimento }).then(() => fecharModalFixa());
+      } else {
+        db.ref('familia/fixas').push({ titulo, valor, vencimento, mesRef, pago: false }).then(() => fecharModalFixa());
+      }
+    }
+
+    function deletarFixa(id) {
+      if (confirm("Deseja excluir esta conta?")) {
+        db.ref('familia/fixas/' + id).remove();
+      }
     }
 
     function abrirModalRecorrente() { document.getElementById('modal-recorrente').classList.remove('hidden'); }
@@ -440,8 +479,85 @@
       db.ref('familia/recorrentes').push({ titulo, valor, vencimento, mesRef: vencimento.slice(0, 7), pago: false }).then(() => fecharModalRecorrente());
     }
     function carregarContasRecorrentes() {}
-    function atualizarGraficos() {}
-    function exportarPDF() {}
+
+    function popularSelectTitulosComparativos() {
+      const select = document.getElementById('filtro-titulo-comparativo');
+      const titulosSet = new Set();
+      dadosFixas.forEach(c => titulosSet.add(c.titulo));
+      dadosRecorrentes.forEach(c => titulosSet.add(c.titulo));
+      
+      select.innerHTML = '<option value="">Selecione o Título</option>';
+      titulosSet.forEach(t => {
+        select.innerHTML += `<option value="${t}">${t}</option>`;
+      });
+    }
+
+    function atualizarDashboard() {
+      const mesesMap = {};
+      let totalGeral = 0;
+
+      dadosFixas.forEach(c => {
+        if (!mesesMap[c.mesRef]) mesesMap[c.mesRef] = 0;
+        mesesMap[c.mesRef] += c.valor;
+        totalGeral += c.valor;
+      });
+      dadosRecorrentes.forEach(c => {
+        if (!mesesMap[c.mesRef]) mesesMap[c.mesRef] = 0;
+        mesesMap[c.mesRef] += c.valor;
+        totalGeral += c.valor;
+      });
+
+      document.getElementById('dash-total-geral').innerText = `R$ ${totalGeral.toFixed(2)}`;
+
+      const mesesOrdenados = Object.keys(mesesMap).sort();
+      const valoresTotais = mesesOrdenados.map(m => mesesMap[m]);
+
+      const ctxTotais = document.getElementById('graficoTotaisMes').getContext('2d');
+      if (chartTotaisInstancia) chartTotaisInstancia.destroy();
+      chartTotaisInstancia = new Chart(ctxTotais, {
+        type: 'bar',
+        data: {
+          labels: mesesOrdenados,
+          datasets: [{ label: 'Total (R$)', data: valoresTotais, backgroundColor: '#10b981', borderRadius: 4 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      atualizarGraficoComparativo();
+    }
+
+    function atualizarGraficoComparativo() {
+      const tituloSelecionado = document.getElementById('filtro-titulo-comparativo').value;
+      const ctxComp = document.getElementById('graficoComparativoTitulos').getContext('2d');
+      
+      const mesesMap = {};
+      const todasContas = [...dadosFixas, ...dadosRecorrentes];
+      
+      todasContas.forEach(c => {
+        if (c.titulo === tituloSelecionado) {
+          if (!mesesMap[c.mesRef]) mesesMap[c.mesRef] = 0;
+          mesesMap[c.mesRef] += c.valor;
+        }
+      });
+
+      const meses = Object.keys(mesesMap).sort();
+      const valores = meses.map(m => mesesMap[m]);
+
+      if (chartCompInstancia) chartCompInstancia.destroy();
+      chartCompInstancia = new Chart(ctxComp, {
+        type: 'line',
+        data: {
+          labels: meses,
+          datasets: [{ label: tituloSelecionado || 'Selecione', data: valores, borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.1)', tension: 0.2, fill: true }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+    }
+
+    function exportarPDF() {
+      const elemento = document.getElementById('conteudo-pdf');
+      html2pdf().from(elemento).save('relatorio-financeiro.pdf');
+    }
   </script>
 </body>
 </html>
