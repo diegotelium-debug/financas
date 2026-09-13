@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FinanceSmart - Nuvem da Família</title>
+  <title>FinanceSmart - Gestão Familiar</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Firebase SDKs (Compat) -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -18,235 +18,542 @@
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
-  
-  <div id="app" class="p-4 max-w-6xl mx-auto space-y-6">
-    <!-- Status Conexão Tempo Real -->
-    <div id="status-conexao" class="bg-amber-600/20 border border-amber-500/40 text-amber-300 text-xs px-3 py-1.5 rounded-lg flex items-center justify-between">
-      <span><i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Conectando à nuvem em tempo real...</span>
-      <span class="text-[10px] bg-amber-500/30 px-1.5 py-0.5 rounded">Aguardando</span>
-    </div>
 
-    <!-- Cabeçalho -->
-    <header class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 gap-4 shadow-lg">
+  <!-- Tela de Login por Senha do Membro -->
+  <div id="tela-login" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 space-y-4 shadow-xl text-center">
+      <i class="fa-solid fa-lock text-purple-500 text-3xl mb-1"></i>
+      <h2 class="text-xl font-bold text-white">Acesso Familiar</h2>
+      <p class="text-xs text-slate-400">Selecione seu perfil e digite sua senha</p>
+      
+      <div class="space-y-3 text-left">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Membro</label>
+          <select id="login-membro" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500">
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Senha</label>
+          <input type="password" id="login-senha" placeholder="Sua senha" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500">
+        </div>
+        <button onclick="realizarLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2.5 rounded-lg text-sm font-medium transition-all shadow-lg">Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-conteudo" class="p-4 max-w-6xl mx-auto space-y-6 hidden">
+    
+    <!-- Cabeçalho Principal com Abas -->
+    <header class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
       <div class="flex items-center gap-3">
         <i class="fa-solid fa-wallet text-emerald-500 text-2xl"></i>
         <div>
-          <h1 class="text-xl font-bold flex items-center gap-2">FinanceSmart <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-normal">Ao Vivo</span></h1>
-          <p class="text-xs text-slate-400">Sincronizado entre todos os celulares</p>
+          <h1 class="text-xl font-bold text-white flex items-center gap-2">FinanceSmart</h1>
+          <p class="text-xs text-slate-400">Logado como: <span id="usuario-logado-nome" class="text-purple-400 font-semibold"></span></p>
         </div>
       </div>
-      
-      <div class="flex flex-wrap gap-2 items-center w-full sm:w-auto">
-        <button onclick="abrirModalNovaConta()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 shadow-lg transition-all">
-          <i class="fa-solid fa-plus"></i> Nova Conta
+
+      <!-- Abas de Navegação -->
+      <div class="flex flex-wrap gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 text-xs">
+        <button onclick="mudarAba('fixas')" id="btn-aba-fixas" class="px-3 py-2 rounded-md font-medium transition-all bg-emerald-600 text-white">Fixas</button>
+        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Parceladas</button>
+        <button onclick="mudarAba('dashboard')" id="btn-aba-dashboard" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Dashboard</button>
+        <button onclick="mudarAba('membros')" id="btn-aba-membros" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Membros</button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="compartilharResumo()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-share-nodes"></i> Compartilhar
         </button>
-        <button onclick="abrirModalMembros()" class="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all">
-          <i class="fa-solid fa-users"></i> Membros & Fotos
+        <button onclick="solicitarPermissaoNotificacao()" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all" title="Ativar Alertas">
+          <i class="fa-solid fa-bell"></i>
         </button>
       </div>
     </header>
 
-    <!-- Barra de Membros Cadastrados na Tela Inicial -->
-    <section class="bg-slate-800 p-3 rounded-xl border border-slate-700 flex items-center justify-between overflow-x-auto gap-4 shadow-sm">
-      <div class="flex items-center gap-2 min-w-max">
-        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-user-group text-purple-400 mr-1"></i> Família:</span>
-      </div>
-      <div id="home-membros-list" class="flex items-center gap-3 overflow-x-auto py-1">
-        <!-- Preenchido via JavaScript -->
-      </div>
-    </section>
-
-    <!-- Filtros & Custos Fixos -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-800 p-4 rounded-xl border border-slate-700">
-      <div class="flex flex-col justify-center">
-        <span class="text-xs text-slate-400 mb-1">Mês de Referência</span>
-        <input type="month" id="current-month-filter" onchange="atualizarInterface()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-      </div>
-      <div class="flex flex-col justify-center">
-        <span class="text-xs text-slate-400 mb-1">Filtrar por Membro</span>
-        <select id="filtro-membro" onchange="atualizarInterface()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-          <option value="">Todos os Membros</option>
-        </select>
-      </div>
-      <div class="flex items-center justify-end gap-2 pt-2 md:pt-0">
-        <button onclick="lancarCustosFixos()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all w-full md:w-auto justify-center">
-          <i class="fa-solid fa-bolt"></i> Lançar Fixas (Aluguel, Carros...)
+        <!-- ABA 1: CONTAS FIXAS -->
+    <div id="aba-fixas" class="space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 gap-3">
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <span class="text-xs text-slate-400">Mês:</span>
+          <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm">
+        </div>
+        <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 w-full sm:w-auto justify-center">
+          <i class="fa-solid fa-plus"></i> Nova Conta Fixa
         </button>
       </div>
-    </div>
 
-    <!-- Dashboard Rápido -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
-        <span class="text-slate-400 text-sm">Gasto Total do Mês</span>
-        <div id="total-month-expense" class="text-2xl font-bold text-white mt-1">R$ 0,00</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="cards-fixas-padrao">
+        <!-- Preenchido via JS (Aluguel, Carro, Internet, Transporte Escolar) -->
       </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
-        <span class="text-slate-400 text-sm">Contas Pendentes</span>
-        <div id="total-pending-expense" class="text-2xl font-bold text-amber-400 mt-1">R$ 0,00</div>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
-        <span class="text-slate-400 text-sm">Contas Quitadas</span>
-        <div id="total-paid-expense" class="text-2xl font-bold text-emerald-400 mt-1">R$ 0,00</div>
-      </div>
-    </section>
 
-    <!-- Tabela de Contas -->
-    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
-      <div class="p-4 border-b border-slate-700 flex justify-between items-center">
-        <h2 class="font-bold text-lg text-white">Relação de Contas</h2>
-        <span id="contador-contas" class="text-xs bg-slate-700 px-2.5 py-1 rounded-full text-slate-300">0 contas</span>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
-              <th class="p-3">Título</th>
-              <th class="p-3">Membro</th>
-              <th class="p-3">Vencimento</th>
-              <th class="p-3">Valor</th>
-              <th class="p-3">Status</th>
-              <th class="p-3 text-right">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="lista-contas-tbody">
-            <tr><td colspan="6" class="p-6 text-center text-slate-500">Carregando dados sincronizados...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Gráfico -->
-    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
-      <h2 class="font-bold text-lg text-white mb-4">Evolução Mensal</h2>
-      <div class="relative h-64 w-full">
-        <canvas id="comparativeChart"></canvas>
-      </div>
-    </div>
-  </div>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FinanceSmart - Nuvem da Família</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Firebase SDKs (Compat) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-  </style>
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
-  
-  <div id="app" class="p-4 max-w-6xl mx-auto space-y-6">
-    <!-- Status Conexão Tempo Real -->
-    <div id="status-conexao" class="bg-amber-600/20 border border-amber-500/40 text-amber-300 text-xs px-3 py-1.5 rounded-lg flex items-center justify-between">
-      <span><i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Conectando à nuvem em tempo real...</span>
-      <span class="text-[10px] bg-amber-500/30 px-1.5 py-0.5 rounded">Aguardando</span>
-    </div>
-
-    <!-- Cabeçalho -->
-    <header class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 gap-4 shadow-lg">
-      <div class="flex items-center gap-3">
-        <i class="fa-solid fa-wallet text-emerald-500 text-2xl"></i>
-        <div>
-          <h1 class="text-xl font-bold flex items-center gap-2">FinanceSmart <span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-normal">Ao Vivo</span></h1>
-          <p class="text-xs text-slate-400">Sincronizado entre todos os celulares</p>
+      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-slate-700 font-bold text-white">Outras Contas Fixas do Mês</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
+                <th class="p-3">Título</th>
+                <th class="p-3">Vencimento</th>
+                <th class="p-3">Valor</th>
+                <th class="p-3">Status</th>
+                <th class="p-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-fixas-extras">
+              <tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhuma conta extra cadastrada.</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      
-      <div class="flex flex-wrap gap-2 items-center w-full sm:w-auto">
-        <button onclick="abrirModalNovaConta()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 shadow-lg transition-all">
-          <i class="fa-solid fa-plus"></i> Nova Conta
-        </button>
-        <button onclick="abrirModalMembros()" class="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all">
-          <i class="fa-solid fa-users"></i> Membros & Fotos
-        </button>
-      </div>
-    </header>
+    </div>
 
-    <!-- Barra de Membros Cadastrados na Tela Inicial -->
-    <section class="bg-slate-800 p-3 rounded-xl border border-slate-700 flex items-center justify-between overflow-x-auto gap-4 shadow-sm">
-      <div class="flex items-center gap-2 min-w-max">
-        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-user-group text-purple-400 mr-1"></i> Família:</span>
-      </div>
-      <div id="home-membros-list" class="flex items-center gap-3 overflow-x-auto py-1">
-        <!-- Preenchido via JavaScript -->
-      </div>
-    </section>
-
-    <!-- Filtros & Custos Fixos -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-800 p-4 rounded-xl border border-slate-700">
-      <div class="flex flex-col justify-center">
-        <span class="text-xs text-slate-400 mb-1">Mês de Referência</span>
-        <input type="month" id="current-month-filter" onchange="atualizarInterface()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-      </div>
-      <div class="flex flex-col justify-center">
-        <span class="text-xs text-slate-400 mb-1">Filtrar por Membro</span>
-        <select id="filtro-membro" onchange="atualizarInterface()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm focus:outline-none focus:border-blue-500">
-          <option value="">Todos os Membros</option>
-        </select>
-      </div>
-      <div class="flex items-center justify-end gap-2 pt-2 md:pt-0">
-        <button onclick="lancarCustosFixos()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all w-full md:w-auto justify-center">
-          <i class="fa-solid fa-bolt"></i> Lançar Fixas (Aluguel, Carros...)
+    <!-- ABA 2: CONTAS RECORRENTES / PARCELADAS -->
+    <div id="aba-recorrentes" class="space-y-4 hidden">
+      <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+        <h2 class="font-bold text-white">Gestão de Parcelados e Recorrentes</h2>
+        <button onclick="abrirModalParcelada()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+          <i class="fa-solid fa-plus"></i> Nova Conta Parcelada
         </button>
+      </div>
+
+      <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
+                <th class="p-3">Título</th>
+                <th class="p-3">Parcela Atual</th>
+                <th class="p-3">Valor da Parcela</th>
+                <th class="p-3">Vencimento</th>
+                <th class="p-3">Status</th>
+                <th class="p-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-parceladas">
+              <tr><td colspan="6" class="p-4 text-center text-slate-500">Nenhuma conta parcelada cadastrada.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- Dashboard Rápido -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
-        <span class="text-slate-400 text-sm">Gasto Total do Mês</span>
-        <div id="total-month-expense" class="text-2xl font-bold text-white mt-1">R$ 0,00</div>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
-        <span class="text-slate-400 text-sm">Contas Pendentes</span>
-        <div id="total-pending-expense" class="text-2xl font-bold text-amber-400 mt-1">R$ 0,00</div>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
-        <span class="text-slate-400 text-sm">Contas Quitadas</span>
-        <div id="total-paid-expense" class="text-2xl font-bold text-emerald-400 mt-1">R$ 0,00</div>
-      </div>
-    </section>
-
-    <!-- Tabela de Contas -->
-    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
-      <div class="p-4 border-b border-slate-700 flex justify-between items-center">
-        <h2 class="font-bold text-lg text-white">Relação de Contas</h2>
-        <span id="contador-contas" class="text-xs bg-slate-700 px-2.5 py-1 rounded-full text-slate-300">0 contas</span>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
-              <th class="p-3">Título</th>
-              <th class="p-3">Membro</th>
-              <th class="p-3">Vencimento</th>
-              <th class="p-3">Valor</th>
-              <th class="p-3">Status</th>
-              <th class="p-3 text-right">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="lista-contas-tbody">
-            <tr><td colspan="6" class="p-6 text-center text-slate-500">Carregando dados sincronizados...</td></tr>
-          </tbody>
-        </table>
+    <!-- ABA 3: DASHBOARD -->
+    <div id="aba-dashboard" class="space-y-4 hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+          <h3 class="font-bold text-white mb-3 text-sm">Gastos de Contas Fixas por Mês</h3>
+          <div class="relative h-64"><canvas id="graficoFixas"></canvas></div>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+          <h3 class="font-bold text-white mb-3 text-sm">Comparativo com Meses Anteriores</h3>
+          <div class="relative h-64"><canvas id="graficoComparativo"></canvas></div>
+        </div>
       </div>
     </div>
 
-    <!-- Gráfico -->
-    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm">
-      <h2 class="font-bold text-lg text-white mb-4">Evolução Mensal</h2>
-      <div class="relative h-64 w-full">
-        <canvas id="comparativeChart"></canvas>
+    <!-- ABA 4: MEMBROS & SENHAS -->
+    <div id="aba-membros" class="space-y-4 hidden">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3 h-fit">
+          <h3 class="font-bold text-white text-sm">Cadastrar Novo Membro</h3>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Nome</label>
+            <input type="text" id="membro-nome" placeholder="Nome..." class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-sm">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Senha de Acesso</label>
+            <input type="password" id="membro-senha" placeholder="Senha numérica ou texto" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-sm">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Foto (Galeria):</label>
+            <input type="file" id="membro-arquivo" accept="image/*" onchange="converterFotoMembro(event)" class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-purple-600 file:text-white">
+            <input type="hidden" id="membro-foto-base64">
+          </div>
+          <button onclick="salvarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-sm font-medium">Salvar Membro</button>
+        </div>
+
+        <div class="md:col-span-2 bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+          <h3 class="font-bold text-white text-sm">Membros da Família Cadastrados</h3>
+          <div id="lista-membros-cadastrados" class="space-y-2"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal Conta Fixa / Extra -->
+  <div id="modal-fixa" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 space-y-3">
+      <h3 class="font-bold text-white text-base">Adicionar Conta Fixa</h3>
+      <input type="text" id="fixa-titulo" placeholder="Título (Ex: Internet, Aluguel...)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <input type="number" step="0.01" id="fixa-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <input type="date" id="fixa-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="fecharModalFixa()" class="bg-slate-700 text-white px-3 py-1.5 rounded text-xs">Cancelar</button>
+        <button onclick="salvarContaFixa()" class="bg-emerald-600 text-white px-3 py-1.5 rounded text-xs">Salvar</button>
       </div>
     </div>
   </div>
+
+  <!-- Modal Conta Parcelada -->
+  <div id="modal-parcelada" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 space-y-3">
+      <h3 class="font-bold text-white text-base">Nova Conta Parcelada / Recorrente</h3>
+      <input type="text" id="parc-titulo" placeholder="Título (Ex: Compra Celular)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <input type="number" step="0.01" id="parc-valor-total" placeholder="Valor Total R$" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <input type="number" id="parc-qtd" placeholder="Quantidade de Parcelas" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <input type="date" id="parc-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="fecharModalParcelada()" class="bg-slate-700 text-white px-3 py-1.5 rounded text-xs">Cancelar</button>
+        <button onclick="salvarContaParcelada()" class="bg-purple-600 text-white px-3 py-1.5 rounded text-xs">Gerar Parcelas</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AiZaSyCT7UJkbCfwq64K3_s3chD",
+      authDomain: "app-contad-diego.firebaseapp.com",
+      databaseURL: "https://app-contad-diego-default-rtdb.firebaseio.com/",
+      projectId: "app-contad-diego",
+      storageBucket: "app-contad-diego.firebasestorage.app",
+      messagingSenderId: "572701759493",
+      appId: "1:572701759493:web:eaa0ffd648"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let membros = [];
+    let usuarioLogado = null;
+    let contasFixasPadraoNomes = ['Aluguel', 'Carro', 'Internet', 'Transporte Escolar'];
+    let dadosFixas = [];
+    let dadosParceladas = [];
+    let chartFixasInstancia = null;
+    let chartCompInstancia = null;
+
+    const hoje = new Date();
+    const mesAtualStr = hoje.toISOString().slice(0, 7);
+    document.getElementById('mes-filtro-fixas').value = mesAtualStr;
+
+    // Carregar Membros e popular login
+    db.ref('familia/membros').on('value', (snapshot) => {
+      const data = snapshot.val();
+      membros = [];
+      const selectLogin = document.getElementById('login-membro');
+      selectLogin.innerHTML = '<option value="">Selecione...</option>';
+      
+      if (data) {
+        Object.keys(data).forEach(key => {
+          membros.push({ id: key, ...data[key] });
+          selectLogin.innerHTML += `<option value="${data[key].nome}">${data[key].nome}</option>`;
+        });
+      }
+      renderizarMembrosCadastrados();
+    });
+
+    function realizarLogin() {
+      const nomeSel = document.getElementById('login-membro').value;
+      const senhaSel = document.getElementById('login-senha').value;
+
+      if (!nomeSel) { alert('Selecione seu nome.'); return; }
+      const membro = membros.find(m => m.nome === nomeSel);
+
+      if (membro && membro.senha && membro.senha !== senhaSel) {
+        alert('Senha incorreta!');
+        return;
+      }
+
+      usuarioLogado = membro;
+      document.getElementById('usuario-logado-nome').innerText = membro.nome;
+      document.getElementById('tela-login').classList.add('hidden');
+      document.getElementById('app-conteudo').classList.remove('hidden');
+      inicializarDadosApp();
+    }
+
+    function mudarAba(aba) {
+      ['fixas', 'recorrentes', 'dashboard', 'membros'].forEach(a => {
+        document.getElementById(`aba-${a}`).classList.add('hidden');
+        document.getElementById(`btn-aba-${a}`).className = "px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white";
+      });
+      document.getElementById(`aba-${aba}`).classList.remove('hidden');
+      document.getElementById(`btn-aba-${aba}`).className = "px-3 py-2 rounded-md font-medium transition-all bg-emerald-600 text-white";
+      if (aba === 'dashboard') atualizarGraficos();
+    }
+
+    function converterFotoMembro(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = 80; canvas.height = 80;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, 80, 80);
+          document.getElementById('membro-foto-base64').value = canvas.toDataURL('image/jpeg', 0.5);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function salvarMembro() {
+      const nome = document.getElementById('membro-nome').value.trim();
+      const senha = document.getElementById('membro-senha').value;
+      const foto = document.getElementById('membro-foto-base64').value;
+
+      if (!nome) { alert('Digite o nome.'); return; }
+
+      db.ref('familia/membros').push({ nome, senha: senha || '', foto: foto || '' }).then(() => {
+        document.getElementById('membro-nome').value = '';
+        document.getElementById('membro-senha').value = '';
+        document.getElementById('membro-foto-base64').value = '';
+        alert('Membro cadastrado com sucesso!');
+      });
+    }
+
+    function renderizarMembrosCadastrados() {
+      const container = document.getElementById('lista-membros-cadastrados');
+      container.innerHTML = '';
+      membros.forEach(m => {
+        container.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/60 text-sm">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center overflow-hidden font-bold">
+                ${m.foto ? `<img src="${m.foto}" class="w-full h-full object-cover">` : m.nome.charAt(0)}
+              </div>
+              <span class="text-white font-medium">${m.nome}</span>
+            </div>
+            <button onclick="excluirMembro('${m.id}')" class="text-red-400 hover:text-red-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `;
+      });
+    }
+
+    function excluirMembro(id) {
+      if (confirm('Excluir membro?')) db.ref('familia/membros/' + id).remove();
+    }
+
+    function inicializarDadosApp() {
+      db.ref('familia/fixas').on('value', snap => {
+        dadosFixas = [];
+        const data = snap.val();
+        if (data) Object.keys(data).forEach(k => dadosFixas.push({ id: k, ...data[k] }));
+        carregarContasFixas();
+      });
+
+      db.ref('familia/parceladas').on('value', snap => {
+        dadosParceladas = [];
+        const data = snap.val();
+        if (data) Object.keys(data).forEach(k => dadosParceladas.push({ id: k, ...data[k] }));
+        carregarContasParceladas();
+      });
+    }
+
+    function carregarContasFixas() {
+      const mesRef = document.getElementById('mes-filtro-fixas').value;
+      const containerPadrao = document.getElementById('cards-fixas-padrao');
+      containerPadrao.innerHTML = '';
+
+      contasFixasPadraoNomes.forEach(nome => {
+        const encontrada = dadosFixas.find(c => c.mesRef === mesRef && c.titulo === nome);
+        const valor = encontrada ? encontrada.valor : 0;
+        const pago = encontrada ? encontrada.pago : false;
+        const venc = encontrada ? encontrada.vencimento : `${mesRef}-10`;
+
+        containerPadrao.innerHTML += `
+          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-white text-sm">${nome}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${pago ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">${pago ? 'Quitada' : 'Pendente'}</span>
+            </div>
+            <div class="text-lg font-bold text-white">R$ ${valor.toFixed(2)}</div>
+            <div class="text-xs text-slate-400">Vencimento: ${venc.split('-').reverse().join('/')}</div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-xs py-1.5 rounded text-white">${pago ? 'Marcar Pendente' : 'Pagar'}</button>
+              <button onclick="editarValorFixaPadrao('${nome}', ${valor}, '${venc}')" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-xs text-white"><i class="fa-solid fa-pen"></i></button>
+            </div>
+          </div>
+        `;
+      });
+
+      // Extras
+      const tbody = document.getElementById('tabela-fixas-extras');
+      tbody.innerHTML = '';
+      const extras = dadosFixas.filter(c => c.mesRef === mesRef && !contasFixasPadraoNomes.includes(c.titulo));
+      if (extras.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhuma conta extra cadastrada.</td></tr>`;
+      } else {
+        extras.forEach(c => {
+          tbody.innerHTML += `
+            <tr class="border-b border-slate-700/50">
+              <td class="p-3 text-white font-medium">${c.titulo}</td>
+              <td class="p-3 text-slate-300">${c.vencimento.split('-').reverse().join('/')}</td>
+              <td class="p-3 text-slate-200">R$ ${c.valor.toFixed(2)}</td>
+              <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span></td>
+              <td class="p-3 text-right space-x-1">
+                <button onclick="alternarStatusId('${c.id}', ${c.pago})" class="bg-slate-700 px-2 py-1 rounded text-xs"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
+                <button onclick="excluirFixa('${c.id}')" class="bg-red-950 text-red-400 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+    }
+
+    function editarValorFixaPadrao(nome, valAtual, vencAtual) {
+      const novoVal = prompt(`Atualizar valor para ${nome}:`, valAtual);
+      if (novoVal !== null) {
+        const mesRef = document.getElementById('mes-filtro-fixas').value;
+        const encontrada = dadosFixas.find(c => c.mesRef === mesRef && c.titulo === nome);
+        if (encontrada) {
+          db.ref('familia/fixas/' + encontrada.id).update({ valor: parseFloat(novoVal) || 0 });
+        } else {
+          db.ref('familia/fixas').push({ titulo: nome, valor: parseFloat(novoVal) || 0, mesRef, vencimento: vencAtual, pago: false });
+        }
+      }
+    }
+
+    function alternarStatusFixaPadrao(nome, statusAtual, val, venc) {
+      const mesRef = document.getElementById('mes-filtro-fixas').value;
+      const encontrada = dadosFixas.find(c => c.mesRef === mesRef && c.titulo === nome);
+      if (encontrada) {
+        db.ref('familia/fixas/' + encontrada.id).update({ pago: !statusAtual });
+      } else {
+        db.ref('familia/fixas').push({ titulo: nome, valor: val, mesRef, vencimento: venc, pago: true });
+      }
+    }
+
+    function abrirModalFixa() { document.getElementById('modal-fixa').classList.remove('hidden'); }
+    function fecharModalFixa() { document.getElementById('modal-fixa').classList.add('hidden'); }
+
+    function salvarContaFixa() {
+      const titulo = document.getElementById('fixa-titulo').value;
+      const valor = parseFloat(document.getElementById('fixa-valor').value);
+      const vencimento = document.getElementById('fixa-vencimento').value;
+      const mesRef = document.getElementById('mes-filtro-fixas').value;
+      if (!titulo || isNaN(valor) || !vencimento) { alert('Preencha todos os campos.'); return; }
+      db.ref('familia/fixas').push({ titulo, valor, vencimento, mesRef, pago: false }).then(() => {
+        fecharModalFixa();
+        document.getElementById('fixa-titulo').value = '';
+        document.getElementById('fixa-valor').value = '';
+      });
+    }
+
+    function alternarStatusId(id, pago) { db.ref('familia/fixas/' + id).update({ pago: !pago }); }
+    function excluirFixa(id) { db.ref('familia/fixas/' + id).remove(); }
+
+    function abrirModalParcelada() { document.getElementById('modal-parcelada').classList.remove('hidden'); }
+    function fecharModalParcelada() { document.getElementById('modal-parcelada').classList.add('hidden'); }
+
+    function salvarContaParcelada() {
+      const titulo = document.getElementById('parc-titulo').value;
+      const total = parseFloat(document.getElementById('parc-valor-total').value);
+      const qtd = parseInt(document.getElementById('parc-qtd').value);
+      const dataBase = document.getElementById('parc-vencimento').value;
+
+      if (!titulo || isNaN(total) || isNaN(qtd) || !dataBase) { alert('Preencha os campos corretamente.'); return; }
+
+      const valorParcela = total / qtd;
+      let [ano, mes, dia] = dataBase.split('-').map(Number);
+
+      for (let i = 1; i <= qtd; i++) {
+        let mesStr = String(mes).padStart(2, '0');
+        let anoStr = String(ano);
+        let mesRef = `${anoStr}-${mesStr}`;
+        let vencimento = `${mesRef}-${String(dia).padStart(2, '0')}`;
+
+        db.ref('familia/parceladas').push({
+          titulo: `${titulo} (${i}/${qtd})`,
+          valor: valorParcela,
+          vencimento: vencimento,
+          mesRef: mesRef,
+          pago: false
+        });
+
+        mes++;
+        if (mes > 12) { mes = 1; ano++; }
+      }
+      fecharModalParcelada();
+      alert('Parcelas geradas e distribuídas com sucesso!');
+    }
+
+    function carregarContasParceladas() {
+      const tbody = document.getElementById('tabela-parceladas');
+      tbody.innerHTML = '';
+      if (dadosParceladas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Nenhuma conta parcelada cadastrada.</td></tr>`;
+        return;
+      }
+      dadosParceladas.forEach(c => {
+        tbody.innerHTML += `
+          <tr class="border-b border-slate-700/50">
+            <td class="p-3 text-white font-medium">${c.titulo}</td>
+            <td class="p-3 text-slate-300">${c.mesRef}</td>
+            <td class="p-3 text-slate-200">R$ ${c.valor.toFixed(2)}</td>
+            <td class="p-3 text-slate-300">${c.vencimento.split('-').reverse().join('/')}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span></td>
+            <td class="p-3 text-right space-x-1">
+              <button onclick="db.ref('familia/parceladas/${c.id}').update({pago: ${!c.pago}})" class="bg-slate-700 px-2 py-1 rounded text-xs"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
+              <button onclick="db.ref('familia/parceladas/${c.id}').remove()" class="bg-red-950 text-red-400 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function atualizarGraficos() {
+      const ctx1 = document.getElementById('graficoFixas').getContext('2d');
+      const meses = [...new Set(dadosFixas.map(c => c.mesRef))].sort();
+      const totais = meses.map(m => dadosFixas.filter(c => c.mesRef === m).reduce((acc, curr) => acc + curr.valor, 0));
+
+      if (chartFixasInstancia) chartFixasInstancia.destroy();
+      chartFixasInstancia = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: meses.length ? meses : [mesAtualStr],
+          datasets: [{ data: totais.length ? totais : [0], backgroundColor: 'rgba(16, 185, 129, 0.5)', borderColor: 'rgb(16, 185, 129)', borderWidth: 1 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      const ctx2 = document.getElementById('graficoComparativo').getContext('2d');
+      if (chartCompInstancia) chartCompInstancia.destroy();
+      chartCompInstancia = new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: meses.length ? meses : [mesAtualStr],
+          datasets: [{ label: 'Total Gasto', data: totais.length ? totais : [0], borderColor: 'rgb(147, 51, 234)', tension: 0.1 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    function solicitarPermissaoNotificacao() {
+      if (!("Notification" in window)) {
+        alert("Este navegador não suporta notificações de desktop/celular.");
+        return;
+      }
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          alert("Notificações ativadas com sucesso!");
+          new Notification("FinanceSmart", { body: "Seus alertas de vencimento estão ativos!" });
+        }
+      });
+    }
+
+    function compartilharResumo() {
+      const texto = `Resumo Financeiro Familiar - Aceda ao FinanceSmart para conferir as contas do mês!`;
+      if (navigator.share) {
+        navigator.share({ title: 'FinanceSmart', text: texto, url: window.location.href });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Link copiado para a área de transferência!');
+      }
+    }
+  </script>
+</body>
+</html>
