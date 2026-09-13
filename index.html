@@ -24,23 +24,25 @@
 
   <!-- Tela de Login por Senha do Membro -->
   <div id="tela-login" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 space-y-4 shadow-xl text-center">
-      <i class="fa-solid fa-lock text-purple-500 text-3xl mb-1"></i>
-      <h2 class="text-xl font-bold text-white">Acesso Familiar</h2>
-      <p class="text-xs text-slate-400">Selecione seu perfil e digite sua senha</p>
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl text-center">
+      <div class="w-14 h-14 bg-purple-600/20 border border-purple-500/40 rounded-full flex items-center justify-center mx-auto mb-2">
+        <i class="fa-solid fa-wallet text-purple-400 text-2xl"></i>
+      </div>
+      <h2 class="text-xl font-bold text-white">FinanceSmart</h2>
+      <p class="text-xs text-slate-400">Selecione seu perfil e digite sua senha de acesso</p>
       
-      <div class="space-y-3 text-left">
+      <div class="space-y-3 text-left pt-2">
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Membro</label>
-          <select id="login-membro" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500">
+          <label class="block text-xs text-slate-400 mb-1">Membro da Família</label>
+          <select id="login-membro" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-all">
             <option value="">Selecione...</option>
           </select>
         </div>
         <div>
           <label class="block text-xs text-slate-400 mb-1">Senha</label>
-          <input type="password" id="login-senha" placeholder="Sua senha" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500">
+          <input type="password" id="login-senha" placeholder="Sua senha" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition-all">
         </div>
-        <button onclick="realizarLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2.5 rounded-lg text-sm font-medium transition-all shadow-lg">Entrar</button>
+        <button onclick="realizarLogin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-purple-600/20">Entrar no App</button>
       </div>
     </div>
   </div>
@@ -48,31 +50,31 @@
   <div id="app-conteudo" class="p-4 max-w-6xl mx-auto space-y-6 hidden">
     
     <!-- Cabeçalho Principal com Abas -->
-    <header class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+    <header class="bg-slate-800 p-4 rounded-2xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
       <div class="flex items-center gap-3">
         <!-- Foto do Membro Logado -->
-        <div id="cabecalho-foto-container" class="w-12 h-12 rounded-full bg-purple-600 border-2 border-purple-400 flex items-center justify-center overflow-hidden font-bold text-lg shadow-md">
+        <div id="cabecalho-foto-container" class="w-12 h-12 rounded-full bg-purple-600 border-2 border-purple-400 flex items-center justify-center overflow-hidden font-bold text-lg shadow-md shrink-0">
           <span id="cabecalho-iniciais">U</span>
         </div>
         <div>
-          <h1 class="text-xl font-bold text-white flex items-center gap-2">FinanceSmart</h1>
+          <h1 class="text-lg font-bold text-white flex items-center gap-2">FinanceSmart</h1>
           <p class="text-xs text-slate-400">Logado como: <span id="usuario-logado-nome" class="text-purple-400 font-semibold"></span></p>
         </div>
       </div>
 
       <!-- Abas de Navegação -->
-      <div class="flex flex-wrap gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 text-xs">
-        <button onclick="mudarAba('fixas')" id="btn-aba-fixas" class="px-3 py-2 rounded-md font-medium transition-all bg-emerald-600 text-white">Fixas</button>
-        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Recorrentes</button>
-        <button onclick="mudarAba('dashboard')" id="btn-aba-dashboard" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Dashboard</button>
-        <button onclick="mudarAba('membros')" id="btn-aba-membros" class="px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white">Membros</button>
+      <div class="flex flex-wrap gap-1 bg-slate-900 p-1.5 rounded-xl border border-slate-700 text-xs">
+        <button onclick="mudarAba('fixas')" id="btn-aba-fixas" class="px-3.5 py-2 rounded-lg font-medium transition-all bg-emerald-600 text-white shadow">Fixas</button>
+        <button onclick="mudarAba('recorrentes')" id="btn-aba-recorrentes" class="px-3.5 py-2 rounded-lg font-medium transition-all text-slate-300 hover:text-white">Recorrentes</button>
+        <button onclick="mudarAba('dashboard')" id="btn-aba-dashboard" class="px-3.5 py-2 rounded-lg font-medium transition-all text-slate-300 hover:text-white">Dashboard</button>
+        <button onclick="mudarAba('membros')" id="btn-aba-membros" class="px-3.5 py-2 rounded-lg font-medium transition-all text-slate-300 hover:text-white">Membros</button>
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="exportarPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all">
-          <i class="fa-solid fa-file-pdf"></i> Compartilhar PDF
+        <button onclick="exportarPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shadow-lg shadow-blue-600/20">
+          <i class="fa-solid fa-file-pdf"></i> PDF
         </button>
-        <button onclick="solicitarPermissaoNotificacao()" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all" title="Ativar Alertas">
+        <button onclick="solicitarPermissaoNotificacao()" class="bg-amber-600/20 border border-amber-500/40 text-amber-400 hover:bg-amber-600/30 px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all" title="Ativar Lembretes de Vencimento">
           <i class="fa-solid fa-bell"></i>
         </button>
       </div>
@@ -83,31 +85,33 @@
 
       <!-- ABA 1: CONTAS FIXAS -->
       <div id="aba-fixas" class="space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 gap-3">
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-2xl border border-slate-700/80 gap-3">
           <div class="flex items-center gap-3 w-full sm:w-auto">
-            <span class="text-xs text-slate-400">Mês:</span>
-            <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-900 border border-slate-700 text-white p-2 rounded-lg text-sm">
+            <span class="text-xs font-medium text-slate-400">Mês de Referência:</span>
+            <input type="month" id="mes-filtro-fixas" onchange="carregarContasFixas()" class="bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
           </div>
-          <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 w-full sm:w-auto justify-center">
-            <i class="fa-solid fa-plus"></i> Nova Conta Fixa
+          <button onclick="abrirModalFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 w-full sm:w-auto justify-center shadow-lg shadow-emerald-600/20">
+            <i class="fa-solid fa-plus"></i> Nova Conta Fixa Extra
           </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cards-fixas-padrao">
-          <!-- Preenchido via JS (Aluguel, Carro, Internet, Transporte Escolar, Enel) -->
-        </div>
+        <!-- Cards Fixos Padrão -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cards-fixas-padrao"></div>
 
-        <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
-          <div class="p-4 border-b border-slate-700 font-bold text-white">Outras Contas Fixas do Mês</div>
+        <!-- Tabela Outras Fixas Extras -->
+        <div class="bg-slate-800 rounded-2xl border border-slate-700/80 overflow-hidden shadow-xl">
+          <div class="p-4 border-b border-slate-700 font-bold text-white text-sm flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-emerald-400"></i> Outras Contas Fixas do Mês
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead>
-                <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
-                  <th class="p-3">Título</th>
-                  <th class="p-3">Vencimento</th>
-                  <th class="p-3">Valor</th>
-                  <th class="p-3">Status / Data Pgto</th>
-                  <th class="p-3 text-right">Ações</th>
+                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-700 text-xs">
+                  <th class="p-3.5">Título</th>
+                  <th class="p-3.5">Vencimento</th>
+                  <th class="p-3.5">Valor</th>
+                  <th class="p-3.5">Status / Data Pgto</th>
+                  <th class="p-3.5 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody id="tabela-fixas-extras">
@@ -120,28 +124,33 @@
 
       <!-- ABA 2: CONTAS RECORRENTES -->
       <div id="aba-recorrentes" class="space-y-4 hidden">
-        <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
-          <h2 class="font-bold text-white">Gestão de Contas Recorrentes (Nubank, Enel, etc.)</h2>
-          <button onclick="abrirModalRecorrente()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Nova Conta Recorrente
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-800 p-4 rounded-2xl border border-slate-700/80 gap-3">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <span class="text-xs font-medium text-slate-400">Mês Recorrente:</span>
+            <input type="month" id="mes-filtro-recorrentes" onchange="carregarContasRecorrentes()" class="bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-sm focus:outline-none focus:border-purple-500">
+          </div>
+          <button onclick="abrirModalRecorrente()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 w-full sm:w-auto justify-center shadow-lg shadow-purple-600/20">
+            <i class="fa-solid fa-plus"></i> Nova Conta Recorrente / Fatura
           </button>
         </div>
 
-        <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-sm">
+        <div class="bg-slate-800 rounded-2xl border border-slate-700/80 overflow-hidden shadow-xl">
+          <div class="p-4 border-b border-slate-700 font-bold text-white text-sm flex items-center gap-2">
+            <i class="fa-solid fa-credit-card text-purple-400"></i> Contas e Parcelamentos do Mês
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead>
-                <tr class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
-                  <th class="p-3">Título</th>
-                  <th class="p-3">Mês Ref</th>
-                  <th class="p-3">Valor</th>
-                  <th class="p-3">Vencimento</th>
-                  <th class="p-3">Modo / Status</th>
-                  <th class="p-3 text-right">Ações</th>
+                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-700 text-xs">
+                  <th class="p-3.5">Título</th>
+                  <th class="p-3.5">Valor</th>
+                  <th class="p-3.5">Vencimento</th>
+                  <th class="p-3.5">Modo / Status</th>
+                  <th class="p-3.5 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody id="tabela-recorrentes">
-                <tr><td colspan="6" class="p-4 text-center text-slate-500">Nenhuma conta recorrente cadastrada.</td></tr>
+                <tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhuma conta recorrente neste mês.</td></tr>
               </tbody>
             </table>
           </div>
@@ -151,12 +160,12 @@
       <!-- ABA 3: DASHBOARD -->
       <div id="aba-dashboard" class="space-y-4 hidden">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <h3 class="font-bold text-white mb-3 text-sm">Gastos de Contas Fixas por Mês</h3>
+          <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700/80 shadow-xl">
+            <h3 class="font-bold text-white mb-3 text-sm flex items-center gap-2"><i class="fa-solid fa-chart-bar text-emerald-400"></i> Gastos de Contas Fixas por Mês</h3>
             <div class="relative h-64"><canvas id="graficoFixas"></canvas></div>
           </div>
-          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <h3 class="font-bold text-white mb-3 text-sm">Comparativo com Meses Anteriores</h3>
+          <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700/80 shadow-xl">
+            <h3 class="font-bold text-white mb-3 text-sm flex items-center gap-2"><i class="fa-solid fa-chart-line text-purple-400"></i> Histórico Evolutivo de Gastos</h3>
             <div class="relative h-64"><canvas id="graficoComparativo"></canvas></div>
           </div>
         </div>
@@ -167,27 +176,27 @@
     <!-- ABA 4: MEMBROS & SENHAS -->
     <div id="aba-membros" class="space-y-4 hidden">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3 h-fit">
-          <h3 class="font-bold text-white text-sm">Cadastrar Novo Membro</h3>
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700/80 space-y-4 h-fit shadow-xl">
+          <h3 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-user-plus text-purple-400"></i> Cadastrar Novo Membro</h3>
           <div>
             <label class="block text-xs text-slate-400 mb-1">Nome</label>
-            <input type="text" id="membro-nome" placeholder="Nome..." class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-sm">
+            <input type="text" id="membro-nome" placeholder="Nome do membro..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500">
           </div>
           <div>
             <label class="block text-xs text-slate-400 mb-1">Senha de Acesso</label>
-            <input type="password" id="membro-senha" placeholder="Senha numérica ou texto" class="w-full bg-slate-900 border border-slate-700 p-2 rounded-lg text-white text-sm">
+            <input type="password" id="membro-senha" placeholder="Senha numérica ou texto" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Foto (Galeria):</label>
-            <input type="file" id="membro-arquivo" accept="image/*" onchange="converterFotoMembro(event)" class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-purple-600 file:text-white">
+            <label class="block text-xs text-slate-400 mb-1">Foto de Perfil:</label>
+            <input type="file" id="membro-arquivo" accept="image/*" onchange="converterFotoMembro(event)" class="w-full text-xs text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-purple-600 file:text-white file:font-semibold">
             <input type="hidden" id="membro-foto-base64">
           </div>
-          <button onclick="salvarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2 rounded-lg text-sm font-medium">Salvar Membro</button>
+          <button onclick="salvarMembro()" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-purple-600/20">Salvar Membro</button>
         </div>
 
-        <div class="md:col-span-2 bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
-          <h3 class="font-bold text-white text-sm">Membros da Família Cadastrados</h3>
-          <div id="lista-membros-cadastrados" class="space-y-2"></div>
+        <div class="md:col-span-2 bg-slate-800 p-5 rounded-2xl border border-slate-700/80 space-y-4 shadow-xl">
+          <h3 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-users text-purple-400"></i> Membros da Família Cadastrados</h3>
+          <div id="lista-membros-cadastrados" class="space-y-2.5"></div>
         </div>
       </div>
     </div>
@@ -195,48 +204,52 @@
   </div>
 
   <!-- Modal Conta Fixa / Extra -->
-  <div id="modal-fixa" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 space-y-3">
+  <div id="modal-fixa" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl">
       <h3 class="font-bold text-white text-base">Adicionar Conta Fixa Extra</h3>
-      <input type="text" id="fixa-titulo" placeholder="Título..." class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-      <input type="number" step="0.01" id="fixa-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-      <input type="date" id="fixa-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+      <div class="space-y-3">
+        <input type="text" id="fixa-titulo" placeholder="Título da conta..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500">
+        <input type="number" step="0.01" id="fixa-valor" placeholder="Valor R$" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500">
+        <input type="date" id="fixa-vencimento" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500">
+      </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button onclick="fecharModalFixa()" class="bg-slate-700 text-white px-3 py-1.5 rounded text-xs">Cancelar</button>
-        <button onclick="salvarContaFixa()" class="bg-emerald-600 text-white px-3 py-1.5 rounded text-xs">Salvar</button>
+        <button onclick="fecharModalFixa()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all">Cancelar</button>
+        <button onclick="salvarContaFixa()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all">Salvar</button>
       </div>
     </div>
   </div>
 
   <!-- Modal Conta Recorrente -->
-  <div id="modal-recorrente" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-xl p-6 space-y-3">
-      <h3 class="font-bold text-white text-base">Nova Conta Recorrente</h3>
-      <input type="text" id="rec-titulo" placeholder="Título (Ex: Fatura Nubank, Enel)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-      <input type="number" step="0.01" id="rec-valor" placeholder="Valor R$ (ou Total se parcelado)" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-      <input type="date" id="rec-vencimento" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-      
-      <div>
-        <label class="block text-xs text-slate-400 mb-1">Modo de Pagamento</label>
-        <select id="rec-modo" onchange="alternarCamposParcelamento()" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
-          <option value="vista">Pago à vista / Pendente simples</option>
-          <option value="parcelado">Parcelado</option>
-        </select>
-      </div>
+  <div id="modal-recorrente" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl">
+      <h3 class="font-bold text-white text-base">Nova Conta Recorrente / Fatura</h3>
+      <div class="space-y-3">
+        <input type="text" id="rec-titulo" placeholder="Título (Ex: Fatura Nubank, Enel)" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500">
+        <input type="number" step="0.01" id="rec-valor" placeholder="Valor R$ (ou Total se parcelado)" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500">
+        <input type="date" id="rec-vencimento" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500">
+        
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Status / Forma de Pagamento</label>
+          <select id="rec-modo" onchange="alternarCamposParcelamento()" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500">
+            <option value="vista">À vista / Fatura Simples</option>
+            <option value="parcelado">Parcelado</option>
+          </select>
+        </div>
 
-      <div id="bloco-qtd-parcelas" class="hidden">
-        <label class="block text-xs text-slate-400 mb-1">Quantidade de Parcelas</label>
-        <input type="number" id="rec-qtd" placeholder="Ex: 5" value="1" class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded-lg text-white text-sm">
+        <div id="bloco-qtd-parcelas" class="hidden">
+          <label class="block text-xs text-slate-400 mb-1">Quantidade Total de Parcelas</label>
+          <input type="number" id="rec-qtd" placeholder="Ex: 5" value="1" min="1" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500">
+        </div>
       </div>
 
       <div class="flex justify-end gap-2 pt-2">
-        <button onclick="fecharModalRecorrente()" class="bg-slate-700 text-white px-3 py-1.5 rounded text-xs">Cancelar</button>
-        <button onclick="salvarContaRecorrente()" class="bg-purple-600 text-white px-3 py-1.5 rounded text-xs">Salvar</button>
+        <button onclick="fecharModalRecorrente()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all">Cancelar</button>
+        <button onclick="salvarContaRecorrente()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all">Salvar</button>
       </div>
     </div>
   </div>
 
-  <script>
+    <script>
     const firebaseConfig = {
       apiKey: "AiZaSyCT7UJkbCfwq64K3_s3chD",
       authDomain: "app-contad-diego.firebaseapp.com",
@@ -260,6 +273,7 @@
     const hoje = new Date();
     const mesAtualStr = hoje.toISOString().slice(0, 7);
     document.getElementById('mes-filtro-fixas').value = mesAtualStr;
+    document.getElementById('mes-filtro-recorrentes').value = mesAtualStr;
 
     // Carregar Membros
     db.ref('familia/membros').on('value', (snapshot) => {
@@ -292,7 +306,6 @@
       usuarioLogado = membro;
       document.getElementById('usuario-logado-nome').innerText = membro.nome;
       
-      // Exibir foto do membro logado no topo
       const containerFoto = document.getElementById('cabecalho-foto-container');
       if (membro.foto) {
         containerFoto.innerHTML = `<img src="${membro.foto}" class="w-full h-full object-cover">`;
@@ -308,10 +321,10 @@
     function mudarAba(aba) {
       ['fixas', 'recorrentes', 'dashboard', 'membros'].forEach(a => {
         document.getElementById(`aba-${a}`).classList.add('hidden');
-        document.getElementById(`btn-aba-${a}`).className = "px-3 py-2 rounded-md font-medium transition-all text-slate-300 hover:text-white";
+        document.getElementById(`btn-aba-${a}`).className = "px-3.5 py-2 rounded-lg font-medium transition-all text-slate-300 hover:text-white";
       });
       document.getElementById(`aba-${aba}`).classList.remove('hidden');
-      document.getElementById(`btn-aba-${aba}`).className = "px-3 py-2 rounded-md font-medium transition-all bg-emerald-600 text-white";
+      document.getElementById(`btn-aba-${aba}`).className = "px-3.5 py-2 rounded-lg font-medium transition-all bg-emerald-600 text-white shadow";
       if (aba === 'dashboard') atualizarGraficos();
     }
 
@@ -323,10 +336,10 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          canvas.width = 80; canvas.height = 80;
+          canvas.width = 100; canvas.height = 100;
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, 80, 80);
-          document.getElementById('membro-foto-base64').value = canvas.toDataURL('image/jpeg', 0.5);
+          ctx.drawImage(img, 0, 0, 100, 100);
+          document.getElementById('membro-foto-base64').value = canvas.toDataURL('image/jpeg', 0.6);
         };
         img.src = e.target.result;
       };
@@ -338,7 +351,7 @@
       const senha = document.getElementById('membro-senha').value;
       const foto = document.getElementById('membro-foto-base64').value;
 
-      if (!nome) { alert('Digite o nome.'); return; }
+      if (!nome) { alert('Digite o nome do membro.'); return; }
 
       db.ref('familia/membros').push({ nome, senha: senha || '', foto: foto || '' }).then(() => {
         document.getElementById('membro-nome').value = '';
@@ -351,23 +364,27 @@
     function renderizarMembrosCadastrados() {
       const container = document.getElementById('lista-membros-cadastrados');
       container.innerHTML = '';
+      if (membros.length === 0) {
+        container.innerHTML = `<p class="text-slate-500 text-sm">Nenhum membro cadastrado ainda.</p>`;
+        return;
+      }
       membros.forEach(m => {
         container.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/60 text-sm">
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center overflow-hidden font-bold">
+          <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center overflow-hidden font-bold text-white shrink-0">
                 ${m.foto ? `<img src="${m.foto}" class="w-full h-full object-cover">` : m.nome.charAt(0)}
               </div>
               <span class="text-white font-medium">${m.nome}</span>
             </div>
-            <button onclick="excluirMembro('${m.id}')" class="text-red-400 hover:text-red-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="excluirMembro('${m.id}')" class="text-red-400 hover:text-red-300 px-2 py-1 rounded-lg text-xs transition-all"><i class="fa-solid fa-trash"></i></button>
           </div>
         `;
       });
     }
 
     function excluirMembro(id) {
-      if (confirm('Excluir membro?')) db.ref('familia/membros/' + id).remove();
+      if (confirm('Deseja realmente excluir este membro?')) db.ref('familia/membros/' + id).remove();
     }
 
     function inicializarDadosApp() {
@@ -388,6 +405,7 @@
       });
     }
 
+    // FIXAS
     function carregarContasFixas() {
       const mesRef = document.getElementById('mes-filtro-fixas').value;
       const containerPadrao = document.getElementById('cards-fixas-padrao');
@@ -401,42 +419,41 @@
         const dataPgto = encontrada ? (encontrada.dataPgto || '') : '';
 
         containerPadrao.innerHTML += `
-          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+          <div class="bg-slate-800 p-4.5 rounded-2xl border border-slate-700/80 space-y-3 shadow-md">
             <div class="flex justify-between items-center">
               <span class="font-bold text-white text-sm">${nome}</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${pago ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">${pago ? 'Quitada' : 'Pendente'}</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${pago ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'}">${pago ? 'Quitada' : 'Pendente'}</span>
             </div>
-            <div class="text-lg font-bold text-white">R$ ${valor.toFixed(2)}</div>
-            <div class="text-xs text-slate-400">Vencimento: ${venc.split('-').reverse().join('/')}</div>
-            ${dataPgto ? `<div class="text-[11px] text-emerald-400">Pago em: ${dataPgto.split('-').reverse().join('/')}</div>` : ''}
+            <div class="text-xl font-bold text-white">R$ ${valor.toFixed(2)}</div>
+            <div class="text-xs text-slate-400 flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i> Vencimento: ${venc.split('-').reverse().join('/')}</div>
+            ${dataPgto ? `<div class="text-[11px] text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-check-circle"></i> Pago em: ${dataPgto.split('-').reverse().join('/')}</div>` : ''}
             <div class="flex gap-2 pt-1">
-              <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-xs py-1.5 rounded text-white">${pago ? 'Marcar Pendente' : 'Pagar'}</button>
-              <button onclick="editarFixaPadraoCompleta('${nome}', ${valor}, '${venc}')" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-xs text-white" title="Editar Valor e Vencimento"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="alternarStatusFixaPadrao('${nome}', ${pago}, ${valor}, '${venc}')" class="flex-1 bg-slate-700/80 hover:bg-slate-700 text-xs font-semibold py-2 rounded-xl text-white transition-all">${pago ? 'Desfazer' : 'Pagar'}</button>
+              <button onclick="editarFixaPadraoCompleta('${nome}', ${valor}, '${venc}')" class="bg-slate-700/80 hover:bg-slate-700 px-3 py-2 rounded-xl text-xs text-white transition-all" title="Editar Valor e Vencimento"><i class="fa-solid fa-pen"></i></button>
             </div>
           </div>
         `;
       });
 
-      // Extras
       const tbody = document.getElementById('tabela-fixas-extras');
       tbody.innerHTML = '';
       const extras = dadosFixas.filter(c => c.mesRef === mesRef && !contasFixasPadraoNomes.includes(c.titulo));
       if (extras.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhuma conta extra cadastrada.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhuma conta extra cadastrada neste mês.</td></tr>`;
       } else {
         extras.forEach(c => {
           tbody.innerHTML += `
             <tr class="border-b border-slate-700/50">
-              <td class="p-3 text-white font-medium">${c.titulo}</td>
-              <td class="p-3 text-slate-300">${c.vencimento.split('-').reverse().join('/')}</td>
-              <td class="p-3 text-slate-200">R$ ${c.valor.toFixed(2)}</td>
-              <td class="p-3">
-                <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span>
-                ${c.dataPgto ? `<div class="text-[10px] text-slate-400 mt-1">Data: ${c.dataPgto.split('-').reverse().join('/')}</div>` : ''}
+              <td class="p-3.5 text-white font-medium">${c.titulo}</td>
+              <td class="p-3.5 text-slate-300 text-xs">${c.vencimento.split('-').reverse().join('/')}</td>
+              <td class="p-3.5 text-slate-200 font-semibold">R$ ${c.valor.toFixed(2)}</td>
+              <td class="p-3.5">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${c.pago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span>
+                ${c.dataPgto ? `<div class="text-[10px] text-slate-400 mt-0.5">Pago: ${c.dataPgto.split('-').reverse().join('/')}</div>` : ''}
               </td>
-              <td class="p-3 text-right space-x-1">
-                <button onclick="alternarStatusId('${c.id}', ${c.pago})" class="bg-slate-700 px-2 py-1 rounded text-xs" title="Mudar Status"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
-                <button onclick="excluirFixa('${c.id}')" class="bg-red-950 text-red-400 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+              <td class="p-3.5 text-right space-x-1">
+                <button onclick="alternarStatusId('${c.id}', ${c.pago})" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1.5 rounded-lg text-xs text-white" title="Mudar Status"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
+                <button onclick="excluirFixa('${c.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2.5 py-1.5 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
               </td>
             </tr>
           `;
@@ -485,6 +502,7 @@
         fecharModalFixa();
         document.getElementById('fixa-titulo').value = '';
         document.getElementById('fixa-valor').value = '';
+        document.getElementById('fixa-vencimento').value = '';
       });
     }
 
@@ -495,7 +513,7 @@
     }
     function excluirFixa(id) { db.ref('familia/fixas/' + id).remove(); }
 
-    // CONTAS RECORRENTES
+    // RECORRENTES
     function abrirModalRecorrente() { document.getElementById('modal-recorrente').classList.remove('hidden'); }
     function fecharModalRecorrente() { document.getElementById('modal-recorrente').classList.add('hidden'); }
 
@@ -551,30 +569,37 @@
       }
 
       fecharModalRecorrente();
+      document.getElementById('rec-titulo').value = '';
+      document.getElementById('rec-valor').value = '';
+      document.getElementById('rec-vencimento').value = '';
       alert('Conta recorrente cadastrada com sucesso!');
     }
 
     function carregarContasRecorrentes() {
+      const mesRef = document.getElementById('mes-filtro-recorrentes').value;
       const tbody = document.getElementById('tabela-recorrentes');
       tbody.innerHTML = '';
-      if (dadosRecorrentes.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Nenhuma conta recorrente cadastrada.</td></tr>`;
+      
+      const filtradas = dadosRecorrentes.filter(c => c.mesRef === mesRef);
+
+      if (filtradas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhuma conta recorrente neste mês.</td></tr>`;
         return;
       }
-      dadosRecorrentes.forEach(c => {
+      
+      filtradas.forEach(c => {
         tbody.innerHTML += `
           <tr class="border-b border-slate-700/50">
-            <td class="p-3 text-white font-medium">${c.titulo}</td>
-            <td class="p-3 text-slate-300">${c.mesRef}</td>
-            <td class="p-3 text-slate-200">R$ ${c.valor.toFixed(2)}</td>
-            <td class="p-3 text-slate-300">${c.vencimento.split('-').reverse().join('/')}</td>
-            <td class="p-3">
-              <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${c.pago ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span>
-              <div class="text-[10px] text-slate-400 mt-1">${c.modo || 'Recorrente'}</div>
+            <td class="p-3.5 text-white font-medium">${c.titulo}</td>
+            <td class="p-3.5 text-slate-200 font-semibold">R$ ${c.valor.toFixed(2)}</td>
+            <td class="p-3.5 text-slate-300 text-xs">${c.vencimento.split('-').reverse().join('/')}</td>
+            <td class="p-3.5">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${c.pago ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${c.pago ? 'Quitada' : 'Pendente'}</span>
+              <div class="text-[10px] text-slate-400 mt-0.5">${c.modo || 'Recorrente'}</div>
             </td>
-            <td class="p-3 text-right space-x-1">
-              <button onclick="db.ref('familia/recorrentes/${c.id}').update({pago: ${!c.pago}})" class="bg-slate-700 px-2 py-1 rounded text-xs" title="Mudar Status"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
-              <button onclick="db.ref('familia/recorrentes/${c.id}').remove()" class="bg-red-950 text-red-400 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+            <td class="p-3.5 text-right space-x-1">
+              <button onclick="db.ref('familia/recorrentes/${c.id}').update({pago: ${!c.pago}})" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1.5 rounded-lg text-xs text-white" title="Mudar Status"><i class="fa-solid ${c.pago ? 'fa-rotate-left' : 'fa-check'}"></i></button>
+              <button onclick="db.ref('familia/recorrentes/${c.id}').remove()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2.5 py-1.5 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
             </td>
           </tr>
         `;
@@ -592,7 +617,7 @@
         type: 'bar',
         data: {
           labels: meses.length ? meses : [mesAtualStr],
-          datasets: [{ data: totais.length ? totais : [0], backgroundColor: 'rgba(16, 185, 129, 0.5)', borderColor: 'rgb(16, 185, 129)', borderWidth: 1 }]
+          datasets: [{ data: totais.length ? totais : [0], backgroundColor: 'rgba(16, 185, 129, 0.6)', borderColor: 'rgb(16, 185, 129)', borderWidth: 1, borderRadius: 6 }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
@@ -603,13 +628,13 @@
         type: 'line',
         data: {
           labels: meses.length ? meses : [mesAtualStr],
-          datasets: [{ label: 'Total Gasto', data: totais.length ? totais : [0], borderColor: 'rgb(147, 51, 234)', tension: 0.1 }]
+          datasets: [{ label: 'Total Gasto', data: totais.length ? totais : [0], borderColor: 'rgb(147, 51, 234)', backgroundColor: 'rgba(147, 51, 234, 0.1)', fill: true, tension: 0.2 }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
-    // LEMBRETES DE 6 E 3 DIAS ANTES DO VENCIMENTO
+    // LEMBRETES DE 6 E 3 DIAS
     function solicitarPermissaoNotificacao() {
       if (!("Notification" in window)) {
         alert("Este navegador não suporta notificações.");
@@ -617,7 +642,7 @@
       }
       Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-          alert("Notificações ativadas! Você receberá alertas 6 e 3 dias antes dos vencimentos.");
+          alert("Notificações ativadas com sucesso!");
         }
       });
     }
@@ -651,7 +676,7 @@
       });
     }
 
-    // EXPORTAR / COMPARTILHAR EM PDF
+    // EXPORTAR PDF
     function exportarPDF() {
       const elemento = document.getElementById('conteudo-pdf');
       const opcoes = {
